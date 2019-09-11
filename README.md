@@ -3,7 +3,12 @@
 
 ## Project Description Template
 
-The purpose of this Project Description is to present the ideas proposed and decisions made during the preliminary envisioning and inception phase of the project. The goal is to analyze an initial concept proposal at a strategic level of detail and attain/compose an agreement between the project team members and the project customer (mentors and instructors) on the desired solution and overall project direction.
+Background : With the OCI standard being established for container runtime, we are seeing multiple implementations becoming popular (including legacy Docker, and new containerd, crio, frakti). Although these allow flexibility in hosting containers, they create a challenge for performing common container management operations in an interoperable manner (e.g. putting an image onto crio is much different than doing so with Docker)
+
+Project specifics : In this project we will study the differences in these popular runtimes and implement an interoperable solution to implement common container management operations. This work will be open-sourced and useful in having an interoperable container management framework.
+For more information see:
+OCI (Open Container Initiative): https://www.opencontainers.org
+
 
 This template proposal contains a number of sections, which you can edit/modify/add/delete/organize as you like.  Some key sections we’d like to have in the proposal are:
 
