@@ -24,16 +24,29 @@ Project Proposal can be used during the follow-up analysis and design meetings t
 
 ## 1.   Vision and Goals Of The Project:
 
+Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the image is configured correctly for the target container.
+This locks individuals and buissnesses into whichever container they started with unless they invest the time required to edit the configuration. 
+The project aims to build a wrapper which will be able to perform many of the container lifecylcle management functions (inspect, ps, events, etc) on all the most popular container runtimes today (Docker, containerd, cri-o, frakti)
+The ultimate goal of the project is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. 
+
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
 Interoperble container runtime will be used by companies who wants to use different runtimes(for different projects maybe), and inidvidual users who wants to try or use different runtimes for their projects but tired of performing the same function in different ways among different runtimes.
+
+The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single test script. 
 
 ## 3.   Scope and Features Of The Project:
 
 The Scope places a boundary around the solution by detailing the range of features and functions of the project. This section helps to clarify the solution scope and can explicitly state what will not be delivered as well.
 
 It should be specific enough that you can determine that e.g. feature A is in-scope, while feature B is out-of-scope.
+
+The project aims to create a wrapper that enables the same container lifecycle management functions across the most popular container runtimes. 
+If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to all runtimes. 
+
+The project is not a tool which will ensure that containerized programs are able to work across all runtimes. 
+
 
 ** **
 
@@ -54,6 +67,8 @@ This section discusses the implications and reasons of the design decisions made
 ## 5. Acceptance criteria
 
 This section discusses the minimum acceptance criteria at the end of the project and stretch goals.
+
+
 
 ## 6.  Release Planning:
 
