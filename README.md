@@ -24,9 +24,7 @@ Project Proposal can be used during the follow-up analysis and design meetings t
 
 ## 1.   Vision and Goals Of The Project:
 
-The vision section describes the final desired state of the project once the project is complete. It also specifies the key goals of the project. This section provides a context for decision-making. A shared vision among all team members can help ensuring that the solution meets the intended goals. A solid vision clarifies perspective and facilitates decision-making.
-
-The vision statement should be specific enough that you can look at a proposed solution and say either "yes, this meets the vision and goals", or "no, it does not".
+Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
 
