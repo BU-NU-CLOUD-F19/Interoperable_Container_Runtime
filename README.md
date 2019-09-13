@@ -27,12 +27,7 @@ Project Proposal can be used during the follow-up analysis and design meetings t
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
-
-This section describes the principal user roles of the project together with the key characteristics of these roles. This information will inform the design and the user scenarios. A complete set of roles helps in ensuring that high-level requirements can be identified in the product backlog.
-
-Again, the description should be specific enough that you can determine whether user A, performing action B, is a member of the set of users the project is designed for.
-
-** **
+Interoperble container runtime will be used by companies who wants to use different runtimes(for different projects maybe), and inidvidual users who wants to try or use different runtimes for their projects but tired of performing the same function in different ways among different runtimes.
 
 ## 3.   Scope and Features Of The Project:
 
