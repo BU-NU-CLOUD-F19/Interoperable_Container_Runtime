@@ -14,28 +14,32 @@ In this project, we study the differences in the popular runtimes such as Docker
 
 ## 1.   Vision and Goals Of The Project:
 
-Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the image is configured correctly for the target container.
-This locks individuals and buissnesses into whichever container they started with unless they invest the time required to edit the configuration. 
-The project aims to build a wrapper which will be able to perform many of the container lifecylcle management functions (inspect, ps, events, etc) on all the most popular container runtimes today (Docker, containerd, cri-o, frakti)
-The ultimate goal of the project is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. 
+Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the scripts are configured correctly for the target container. Because, launching an image in Docker container is different than running in Cri-o. 
+This locks individuals and businesses into whichever container they started with unless they invest the time required to edit the configuration and their scripts which holds the commands for target container. 
+
+* Main goal: The project aims to build a wrapper which will be able to perform some of the mostly used container lifecylcle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
+
+
+* Stretched goal: The ultimate goal of the project is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. Publishing minumum viable framework for this purpose will enable users to run their security checks using single script across over most popular containers.
 
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
-Interoperble container runtime will be used by companies who wants to use different runtimes(for different projects maybe), and inidvidual users who wants to try or use different runtimes for their projects but tired of performing the same function in different ways among different runtimes.
+Interoperble container runtime will be used by companies who wants to use different container runtimes (e.g., for different projects), and inidvidual users who wants to try or use different runtimes for their projects but tired of performing the same function in different ways and languages among different runtimes.
 
-The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single test script. 
+The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single script. 
+
+PersonA: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will enable this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
+
 
 ## 3.   Scope and Features Of The Project:
 
-The Scope places a boundary around the solution by detailing the range of features and functions of the project. This section helps to clarify the solution scope and can explicitly state what will not be delivered as well.
 
-It should be specific enough that you can determine that e.g. feature A is in-scope, while feature B is out-of-scope.
+The project aims to create a framework that enables the some of mostly used container lifecycle management functions across the most popular container runtimes. 
+[Subject to change] For the PoC, we plan to implement ps, inspect and start/stop commands over Docker and Cri-o. 
+If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to most popular runtimes (e.g., Cri-o, containerd). 
 
-The project aims to create a wrapper that enables the same container lifecycle management functions across the most popular container runtimes. 
-If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to all runtimes. 
-
-The project is not a tool which will ensure that containerized programs are able to work across all runtimes. 
+The project is not a tool which will ensure that containerized programs are able to work across all runtimes. Rather it is a common framework, that enables to run basic/most common commands over most popular container run-times. 
 
 
 ** **
