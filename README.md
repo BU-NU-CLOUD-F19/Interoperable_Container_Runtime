@@ -17,6 +17,10 @@ In this project, we study the differences in the popular runtimes such as Docker
 Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the scripts are configured correctly for the target container. Because, launching an image in Docker container is different than running in Cri-o. 
 This locks individuals and businesses into whichever container they started with unless they invest the time required to edit the configuration and their scripts which holds the commands for target container. 
 
+* Set up and study most common container run times. (e.g., Docker, cri-o)
+
+* Study the mostly used lifecycle management functionalities for these runtimes. (e.g., start/stop execution, ps)
+
 * Main goal: The project aims to build a wrapper which will be able to perform some of the mostly used container lifecylcle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
 
 
@@ -29,7 +33,7 @@ Interoperble container runtime will be used by companies who wants to use differ
 
 The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single script. 
 
-PersonA: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will enable this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
+PersonA: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
 
 
 ## 3.   Scope and Features Of The Project:
