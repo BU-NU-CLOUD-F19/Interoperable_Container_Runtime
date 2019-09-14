@@ -50,13 +50,13 @@ The project is not a tool which will ensure that containerized programs are able
 
 ## 4. Solution Concept
 
-This section provides a high-level outline of the solution.
-
 Global Architectural Structure Of the Project:
 
-This section provides a high-level architecture or a conceptual diagram showing the scope of the solution. If wireframes or visuals have already been done, this section could also be used to show how the intended solution will look. This section also provides a walkthrough explanation of the architectural structure.
+![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/cloud-architecture.png "Hover text")
 
- 
+Interoperable framework will take place in-between developer and container runtimes. It will interpret the mostly used commands and target runtime in common language/script from user, then in the background execute the functionality in any runtime. 
+
+It aims to provide a common way of lifecycle management of container runtimes in interoperable way.
 
 Design Implications and Discussion:
 
@@ -64,8 +64,7 @@ This section discusses the implications and reasons of the design decisions made
 
 ## 5. Acceptance criteria
 
-This section discusses the minimum acceptance criteria at the end of the project and stretch goals.
-
+Acceptance criteria is to enable 4 or 5 mostly used commands to execute two different container runtimes such as Docker, and Cri-o. However, as a stretch goal we plan to go beyond it and enable it over at least one more runtime (e.g., containerd or flika) and be able to run Docker CIS benchmark on those runtimes.
 
 
 ## 6.  Release Planning:
@@ -85,4 +84,4 @@ https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
 In particular, you can add images like this (clone the repository to see details):
 
-![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/cloud-architecture.png "Hover text")
+
