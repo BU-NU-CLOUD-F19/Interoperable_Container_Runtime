@@ -1,24 +1,14 @@
 # Interoperable_Container_Runtime
 ** **
 
-## Project Description Template
+## Abstract
 
-Background : With the OCI standard being established for container runtime, we are seeing multiple implementations becoming popular (including legacy Docker, and new containerd, crio, frakti). Although these allow flexibility in hosting containers, they create a challenge for performing common container management operations in an interoperable manner (e.g. putting an image onto crio is much different than doing so with Docker)
+Lightweight containers made virtual machines very accessible and easy to use for all. By the time, popular providers come up with different implementations and approaches for managing container functionalities. Thus, created a challenge for performing common container lifecycle functionalities in a common manner. For example, running a command to pull an image in Docker is very different from Containerd or Crio.
+ 
+In order to establish the common ground, OCI came out (For more information see: OCI (Open Container Initiative): https://www.opencontainers.org). However, this standardization does not implicitly state how a container management should function, rather it states how to run a file-system bundle or such. 
 
-Project specifics : In this project we will study the differences in these popular runtimes and implement an interoperable solution to implement common container management operations. This work will be open-sourced and useful in having an interoperable container management framework.
-For more information see:
-OCI (Open Container Initiative): https://www.opencontainers.org
+In this project, we study the differences in the popular runtimes such as Docker, containerd and implement an interoperable solution that interface common container lifecycle-management functionalities. 
 
-
-This template proposal contains a number of sections, which you can edit/modify/add/delete/organize as you like.  Some key sections we’d like to have in the proposal are:
-
-- Vision: An executive summary of the vision, goals, users, and general scope of the intended project.
-
-- Solution Concept: the approach the project team will take to meet the business needs. This section also provides an overview of the architectural and technical designs made for implementing the project.
-
-- Scope: the boundary of the solution defined by itemizing the intended features and functions in detail, determining what is out of scope, a release strategy and possibly the criteria by which the solution will be accepted by users and operations.
-
-Project Proposal can be used during the follow-up analysis and design meetings to give context to efforts of more detailed technical specifications and plans. It provides a clear direction for the project team; outlines project goals, priorities, and constraints; and sets expectations.
 
 ** **
 
