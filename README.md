@@ -43,6 +43,8 @@ The project aims to create a framework that enables the some of mostly used cont
 [Subject to change] For the PoC, we plan to implement ps, inspect and start/stop commands over Docker and Cri-o. 
 If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to most popular runtimes (e.g., Cri-o, containerd). 
 
+[See https://www.cisecurity.org/benchmark/docker/]
+
 The project is not a tool which will ensure that containerized programs are able to work across all runtimes. Rather it is a common framework, that enables to run basic/most common commands over most popular container run-times. 
 
 
@@ -60,11 +62,14 @@ It aims to provide a common way of lifecycle management of container runtimes in
 
 Design Implications and Discussion:
 
-This section discusses the implications and reasons of the design decisions made during the global architecture design.
+* The implementation in the background for essential lifecycle functions will be examined. And the way containers interact with underlying Operating System will be analyzed
+* According to findings and common ways of executions, we'll add those functionalities to our framework
+* Interoperable frame will probably be developed in Python. 
+* All the functions will be implemented in interoperable way that, end-user would not need to care about against which container run-time their systems will run
 
 ## 5. Acceptance criteria
 
-Acceptance criteria is to enable 4 or 5 mostly used commands to execute two different container runtimes such as Docker, and Cri-o. However, as a stretch goal we plan to go beyond it and enable it over at least one more runtime (e.g., containerd or flika) and be able to run Docker CIS benchmark on those runtimes.
+Acceptance criteria is to enable 4 or 5 mostly used commands to execute on at least two different container runtimes such as Docker, and Cri-o. However, as a stretch goal we plan to go beyond it and enable it over at least one more runtime (e.g., containerd or flika) and be able to run Docker CIS benchmark on those runtimes.
 
 
 ## 6.  Release Planning:
