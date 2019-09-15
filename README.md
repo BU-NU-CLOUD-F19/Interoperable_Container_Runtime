@@ -3,37 +3,31 @@
 
 ## Abstract
 
-Lightweight containers made virtual machines very accessible and easy to use for all. By the time, popular providers come up with different implementations and approaches for managing container functionalities. Thus, created a challenge for performing common container lifecycle functionalities in a common manner. For example, running a command to pull an image in Docker is very different from Containerd or Crio.
- 
-In order to establish the common ground, OCI came out (For more information see: OCI (Open Container Initiative): https://www.opencontainers.org). However, this standardization does not implicitly state how a container management should function, rather it states how to run a file-system bundle or such. 
-
-In this project, we study the differences in the popular runtimes such as Docker, containerd and implement an interoperable solution that interfaces common container lifecycle-management functionalities. 
+Lightweight containers make virtual machines accessible and easy to use for all. Popular providers have implemented different implementations and approaches for managing container functionalities. This creates a challenge for performing common container lifecycle functionalities in a common manner. For example, running a command to pull an image in Docker is very different from Containerd or Crio. The Open Container Initiative (OCI, https://www.opencontainers.org) has been established to create a open standard for container use. However, this standardization does not cover lifecycle-management, instead specifying initialization of images.  In this project, we will study the differences in the popular runtimes such as Docker, containerd, and crio to implement a lifecycle mangement solution that is operable with popular container types, interfacing common container lifecycle-management functionalities. 
 
 
 ** **
 
 ## 1.   Vision and Goals Of The Project:
 
-Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the scripts are configured correctly for the target container. Because, launching an image in Docker container is different than running in Cri-o. 
-This locks individuals and businesses into whichever container they started with unless they invest the time required to edit the configuration and their scripts which holds the commands for target container. 
+Currently if someone wishes to launch an image in a container or perform any other lifecycle management functions on it, they must be sure that the scripts are configured correctly for the target container, as (for example) launching an image in a Docker container differs from running in Cri-o. This locks individuals and businesses into whichever container they started with unless they invest the time required to edit the configuration and their scripts which holds the commands for target container. In order to address this and develop a means to enable users to perform lifecycle management in a platform agnostic manner, we must begin with the following:
 
 * Set up and study most common container run times. (e.g., Docker, cri-o)
 
 * Study the mostly used lifecycle management functionalities for these runtimes. (e.g., start/stop execution, ps)
 
-* Main goal: The project aims to build a wrapper which will be able to perform some of the mostly used container lifecylcle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
+Our main goal is to build a wrapper which will be able to perform some of the mostly used container lifecylcle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
 
-
-* Stretched goal: The ultimate goal of the project is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. Publishing minumum viable framework for this purpose will enable users to run their security checks using single script across over most popular containers.
+The ultimate goal of the project, although considered a stretch goal within the timeframe of this project, is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. Publishing minumum viable framework for this purpose will enable users to run their security checks using single script across over most popular containers.
 
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
-Interoperble container runtime will be used by companies who wants to use different container runtimes (e.g., for different projects), and inidvidual users who wants to try or use different runtimes for their projects but tired of performing the same function in different ways and languages among different runtimes.
+Interoperble container runtime will be used by companies desiring to use different container runtimes (e.g., for different projects), and inidvidual users who wish to try or use different runtimes for their projects but tired of performing the same function in different ways and languages among different runtimes.
 
 The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single script. 
 
-PersonA: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
+Person A: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
 
 
 ## 3.   Scope and Features Of The Project:
