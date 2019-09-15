@@ -7,7 +7,7 @@ Lightweight containers made virtual machines very accessible and easy to use for
  
 In order to establish the common ground, OCI came out (For more information see: OCI (Open Container Initiative): https://www.opencontainers.org). However, this standardization does not implicitly state how a container management should function, rather it states how to run a file-system bundle or such. 
 
-In this project, we study the differences in the popular runtimes such as Docker, containerd and implement an interoperable solution that interface common container lifecycle-management functionalities. 
+In this project, we study the differences in the popular runtimes such as Docker, containerd and implement an interoperable solution that interfaces common container lifecycle-management functionalities. 
 
 
 ** **
@@ -69,19 +69,44 @@ Acceptance criteria is to enable 4 or 5 mostly used commands to execute two diff
 
 ## 6.  Release Planning:
 
-Release planning section describes how the project will deliver incremental sets of features and functions in a series of releases to completion. Identification of user stories associated with iterations that will ease/guide sprint planning sessions is encouraged. Higher level details for the first iteration is expected.
+Release #1 (due by Week 5): 
+
+* Set up at least two container run-time enviroments (e.g., Docker, Cri-o). 
+* Start experimentation with life-cycle functions on runtimes
+* Give a detailed report about implementation of requested functionalities (e.g., Start/Stop execution, ps, inspect)
+
+Release #2 (due by Week 7): 
+
+* Implement at least two lifecycle functions over two container runtimes in interoperable framework
+
+Release #3 (due by Week 9): 
+
+* Implement and demo at least two more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+
+Release #4 (due by Week 11): 
+
+* Implement and demo at least two more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+
+Release #5 (due by Week 12): 
+
+* Implement and demo at least one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+
+* Finalize report and demo end-to-end
+
+Release #5 (due by Week 13) [Stretched goal]: 
+
+* Demo with Docker CIS Benchmark if time permits
+
 
 ** **
 
 ## General comments
 
-Remember that you can always add features at the end of the semester, but you can't go back in time and gain back time you spent on features that you couldn't complete.
+* Detailed backlogs will take place on the Trello board [Link will be provided]
+* This project has an oppurtinity to turn into a research paper that can be submitted to top-tier systems conference
+* Architecture diagram will be updated with the more information gained from implementations
+
 
 ** **
-
-For more help on markdown, see
-https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-
-In particular, you can add images like this (clone the repository to see details):
 
 
