@@ -82,19 +82,19 @@ Release #1 (due by Week 5):
 
 Release #2 (due by Week 7): 
 
-* Implement at least two lifecycle functions over two container runtimes in interoperable framework
+* Implement two lifecycle functions over two container runtimes in interoperable framework
 
 Release #3 (due by Week 9): 
 
-* Implement and demo at least two more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+* Implement and demo one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
 
 Release #4 (due by Week 11): 
 
-* Implement and demo at least two more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+* Implement and demo one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
 
 Release #5 (due by Week 12): 
 
-* Implement and demo at least one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+* Implement and demo one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
 
 * Finalize report and demo end-to-end
 
