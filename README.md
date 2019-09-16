@@ -23,23 +23,21 @@ The ultimate goal of the project, although considered a stretch goal within the 
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
 ## 2. Users/Personas Of The Project:
-Interoperble container runtime will be used by companies desiring to use different container runtimes (e.g., for different projects), and inidvidual users who wish to try or use different runtimes for their projects but tired of performing the same function in different ways and languages among different runtimes.
 
-The project is aimed at buisnesses and individuals who will be testing or running containerized programs across numerous runtimes so that they only need a single script. 
-
-Person A: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. However, now he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. In that point, we plan to deliever interoparable framework to the table!
+The intended user is a software developer who is managing applications across containers running on different runtimes, in particular testing applications across different containers.
+ 
+Example: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. Presently, he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. With the interoperability framework in place, the developer is able to manage the lifecycle of each container type with a single set of commands.
 
 
 ## 3.   Scope and Features Of The Project:
 
 
 The project aims to create a framework that enables the some of mostly used container lifecycle management functions across the most popular container runtimes. 
+
 [Subject to change] For the PoC, we plan to implement ps, inspect and start/stop commands over Docker and Cri-o. 
 If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to most popular runtimes (e.g., Cri-o, containerd). 
 
 [See https://www.cisecurity.org/benchmark/docker/]
-
-The project is not a tool which will ensure that containerized programs are able to work across all runtimes. Rather it is a common framework, that enables to run basic/most common commands over most popular container run-times. 
 
 
 ** **
