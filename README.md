@@ -3,7 +3,11 @@
 
 ## Abstract
 
-Lightweight containers make virtual machines accessible and easy to use for all. Popular providers have implemented different implementations and approaches for managing container functionalities. This creates a challenge for performing common container lifecycle functionalities in a common manner. For example, running a command to pull an image in Docker is very different from Containerd or Crio. The Open Container Initiative (OCI, https://www.opencontainers.org) has been established to create a open standard for container use. However, this standardization does not cover lifecycle-management, instead specifying initialization of images.  In this project, we will study the differences in the popular runtimes such as Docker, containerd, and crio to implement a lifecycle mangement solution that is operable with popular container types, interfacing common container lifecycle-management functionalities. 
+Lightweight containers is very accessible and easy to use for all. Popular providers have implemented different implementations and approaches for managing container functionalities. This creates a challenge for performing common container lifecycle functionalities in a common manner. For example, running a command to pull an image in Docker is very different from Containerd or Crio. 
+
+The Open Container Initiative (OCI, https://www.opencontainers.org) has been established to create a open standard for container use. However, this standardization does not cover lifecycle-management, instead it only specifies downloading image then unpacking that image into an OCI Runtime filesystem bundle. It does not clarify how to run or manage these images.
+
+In this project, we will study the differences in the popular runtimes such as Docker, containerd, and crio to implement a lifecycle mangement solution that is operable with popular container runtimes, interfacing common container lifecycle-management functionalities. 
 
 
 ** **
@@ -16,9 +20,9 @@ Currently if someone wishes to launch an image in a container or perform any oth
 
 * Study the mostly used lifecycle management functionalities for these runtimes. (e.g., start/stop execution, ps)
 
-Our main goal is to build a wrapper which will be able to perform some of the mostly used container lifecylcle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
+Our main goal is to build a framework which will be able to perform some of the mostly used container lifecycle management functions (e.g., start/stop execution, inspect, ps, etc) on the most popular container runtimes today (e.g., Docker, containerd, cri-o, frakti)
 
-The ultimate goal of the project, although considered a stretch goal within the timeframe of this project, is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. Publishing minumum viable framework for this purpose will enable users to run their security checks using single script across over most popular containers.
+The ultimate goal of the project, although can be considered as a stretch goal within the timeframe of this project, is to enable the set of tests run in the Docker CIS Benchmark across any container runtime. Publishing minumum viable framework for this purpose will enable users to run their security checks using **single script across over most popular containers.**
 
 Interoperable container runtime will be a tool that allows user to perform a few common container lifecycle management functions among different runtimes(including docker, new containerd, crio, frakti) in one interoperable way. 
 
@@ -26,7 +30,7 @@ Interoperable container runtime will be a tool that allows user to perform a few
 
 The intended user is a software developer who is managing applications across containers running on different runtimes, in particular testing applications across different containers.
  
-Example: A software developer would like to move an application from Docker to Cri-o, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. Presently, he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. With the interoperability framework in place, the developer is able to manage the lifecycle of each container type with a single set of commands.
+Example: A software developer would like to launch an image in Cri-o instead of Docker, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. Presently, he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. With the interoperability framework in place, the developer is able to run a single set of commands which would work on these popular container runtimes.
 
 
 ## 3.   Scope and Features Of The Project:
@@ -37,8 +41,9 @@ The project aims to create a framework that enables the some of mostly used cont
 [Subject to change] For the PoC, we plan to implement ps, inspect and start/stop commands over Docker and Cri-o. 
 If this is achieved the project also aims to use these functions to bring the Docker CIS Benchmark functionality to most popular runtimes (e.g., Cri-o, containerd). 
 
-[See https://www.cisecurity.org/benchmark/docker/]
+Essentially, by using the lower-level runtime runc, we'd like to expose lifecycle management functionalities to users in an interoperable way, instead of having different commands for each higher-level runtimes as in Docker vs Cri-o.
 
+[See https://www.cisecurity.org/benchmark/docker/]
 
 ** **
 
@@ -48,16 +53,14 @@ Global Architectural Structure Of the Project:
 
 ![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/figures/cloud-architecture.png "Hover text")
 
-Interoperable framework will take place in-between developer and container runtimes. It will interpret the mostly used commands and target runtime in common language/script from user, then in the background execute the functionality in any runtime. 
-
-It aims to provide a common way of lifecycle management of container runtimes in interoperable way.
+Interoperable framework will take place between developer and container runtimes. It aims to provide a common way of lifecycle management of container runtimes in interoperable way. That is, a single script would be able to execute independent of underlying container runtime. For example, you can test your application on any container runtimes.
 
 Design Implications and Discussion:
 
-* The implementation in the background for essential lifecycle functions will be examined. And the way containers interact with underlying Operating System will be analyzed
-* According to findings and common ways of executions, we'll add those functionalities to our framework
+* The implementation in the background for essential lifecycle functions will be examined. And the way containers interact with underlying Operating System will be analyzed.
+* According to findings and common ways of executions, we'll add those functionalities to our framework.
 * Interoperable frame will probably be developed in Python. 
-* All the functions will be implemented in interoperable way that, end-user would not need to care about against which container run-time their systems will run
+* All the functions will be implemented interoperable way, end-user would not need to care about which container run-time their systems run.
 
 Architecture of the Docker runtime:
 
@@ -83,11 +86,11 @@ Release #1 (due by Week 5):
 
 Release #2 (due by Week 7): 
 
-* Implement two lifecycle functions over two container runtimes in interoperable framework
+* Emprical analysis/evaluation of the overhead in high-level runtimes (e.g., Docker) as opposed to using only runc. 
 
 Release #3 (due by Week 9): 
 
-* Implement and demo one more lifecycle functions over two or three (optional) container runtimes in interoperable framework
+* Implement and demo two lifecycle functions over two or three (optional) container runtimes in interoperable framework
 
 Release #4 (due by Week 11): 
 
