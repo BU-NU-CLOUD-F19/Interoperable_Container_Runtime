@@ -46,7 +46,7 @@ If this is achieved the project also aims to use these functions to bring the Do
 
 Global Architectural Structure Of the Project:
 
-![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/cloud-architecture.png "Hover text")
+![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/figures/cloud-architecture.png "Hover text")
 
 Interoperable framework will take place in-between developer and container runtimes. It will interpret the mostly used commands and target runtime in common language/script from user, then in the background execute the functionality in any runtime. 
 
