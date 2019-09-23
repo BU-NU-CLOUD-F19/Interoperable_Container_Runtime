@@ -59,6 +59,15 @@ Design Implications and Discussion:
 * Interoperable frame will probably be developed in Python. 
 * All the functions will be implemented in interoperable way that, end-user would not need to care about against which container run-time their systems will run
 
+Architecture of the Docker runtime:
+
+![alt text](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/figures/Docker-architecture.png "Hover text")
+
+Docker actually uses runc to run the container but implement image management and APIs on top. You can think of these features -- which include image transport, image management, image unpacking, and APIs -- as high-level features compared to runc's low-level implementation.
+
+CRI-O and Containerd also use runc for low-level container functionalities. Therefore, we'll analyze the overhead introduced by higher level runtimes such as Docker on top of runc. And use runc to create interoperable way of managing containers.
+
+
 ## 5. Acceptance criteria
 
 Acceptance criteria is to enable 4 or 5 mostly used commands to execute on at least two different container runtimes such as Docker, and Cri-o. However, as a stretch goal we plan to go beyond it and enable it over at least one more runtime (e.g., containerd or flika) and be able to run Docker CIS benchmark on those runtimes.
@@ -90,7 +99,7 @@ Release #5 (due by Week 12):
 
 * Finalize report and demo end-to-end
 
-Release #5 (due by Week 13) [Stretched goal]: 
+Release #6 (due by Week 13) [Stretched goal]: 
 
 * Demo with Docker CIS Benchmark if time permits
 
