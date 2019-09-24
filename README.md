@@ -32,6 +32,8 @@ The intended user is a software developer who is managing applications across co
  
 Example: A software developer would like to launch an image in Cri-o instead of Docker, because he realizes that cri-o is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. Presently, he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container run-time. With the interoperability framework in place, the developer is able to run a single set of commands which would work on these popular container runtimes.
 
+Our aim is to provide this user a common management framework for controlling/managing containers in those different environments/runtimes.
+
 
 ## 3.   Scope and Features Of The Project:
 
