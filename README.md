@@ -162,6 +162,12 @@ The main questions and concerns we have at this point are regarding understandin
 
 [1]: Container Runtimes Part 1: An Introduction to Container Runtimes. https://www.ianlewis.org/en/container-runtimes-part-1-introduction-container-r
 
+[2]: What’s the difference between runc, containerd, docker?. https://medium.com/@alenkacz/whats-the-difference-between-runc-containerd-docker-3fc8f79d4d6e
+
+[3]: Docker components explained. http://alexander.holbreich.org/docker-components-explained/
+
+[4]: opencontainers/runc github repo. https://github.com/opencontainers/runc
+
 
 ** **
 ## Presentations
