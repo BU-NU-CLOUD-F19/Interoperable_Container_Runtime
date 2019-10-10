@@ -172,6 +172,8 @@ The main questions and concerns we have at this point are regarding understandin
 ** **
 ## Presentations
 
-https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260
+1. https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260
+
+2. https://docs.google.com/presentation/d/13oyb9Et6FaSwatqjOO1UZ1DuA2F75J4_1z9GpLquNSw/edit#slide=id.g61835f440d_2_260
 
 
