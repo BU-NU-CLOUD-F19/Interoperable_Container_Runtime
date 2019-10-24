@@ -4,8 +4,8 @@ from pyfiglet import Figlet
 from colorama import Fore, Back, Style 
 
 
-#pip install pyfiglet
-#pip install colorama
+#pip3 install pyfiglet
+#pip3 install colorama
 
 """
 CIS 5.1 -->  Do not disable AppArmor Profile (Scored) 
@@ -39,6 +39,8 @@ state_path_docker = "/run/docker/runtime-runc/moby/{}/state.json"
 config_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/config.json"
 state_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/state.json"
 
+config_path_containerd = "/run/containerd/io.containerd.runtime.v2.task/default/{}/config.json"
+state_path_containerd = "/run/containerd/runc/default/{}/state.json"
 
 
 # config.json attiributes
@@ -83,6 +85,8 @@ def main():
         crio_utils()
     elif sys.argv[1] == "--docker" or sys.argv[1] == "-docker" or sys.argv[1] == "--d" or sys.argv[1] == "-d":
         docker_utils()
+    elif sys.argv[1] == "--containerd" or sys.argv[1] == "-containerd" or sys.argv[1] == "--ctr" or sys.argv[1] == "-ctr":
+        containerd_utils()
 
 
 def docker_utils():
@@ -96,10 +100,16 @@ def docker_utils():
         print(Style.RESET_ALL + "")
 
 
-    # with open(hostconfig_path_docker) as json_file:
-    #     data = json.load(json_file)
-    #     print(f"CIS 5.4:     Privileged : {data[priviliged_key]}")
-    #     print(f"CIS 5.2:     SE_Linux : {data[security_opts_key]}")
+def containerd_utils():
+    with open(config_path_containerd) as json_file:
+        data = json.load(json_file)
+        process_attributes = data[process_key]
+        appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
+        print(Fore.YELLOW)
+
+        print(f"CIS 5.1: appArmor: {appArmor}")
+        print(f"CIS 5.3:     permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
+        print(Style.RESET_ALL + "")
 
 def crio_utils():
     print("**  CIS Benchmark for CRI-O. **")
@@ -109,7 +119,7 @@ def crio_utils():
         #print(data)
         
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
-        print(Fore.RED + f"CIS 5.1: appArmor: {appArmor}")
+        print(f"CIS 5.1: appArmor: {appArmor}")
         print(f"CIS 5.3: permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
         print(Style.RESET_ALL + "")
         
@@ -119,8 +129,10 @@ def format_paths():
     global state_path_docker
     global config_path_crio
     global state_path_crio
+    global config_path_containerd
 
     config_path_docker = config_path_docker.format(sys.argv[2])
+    config_path_containerd = config_path_containerd.format(sys.argv[2])
     hostconfig_path_docker = hostconfig_path_docker.format(sys.argv[2])
     state_path_docker = state_path_docker.format(sys.argv[2])
     config_path_crio = config_path_crio.format(sys.argv[2])
