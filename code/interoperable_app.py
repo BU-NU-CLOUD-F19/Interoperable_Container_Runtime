@@ -32,6 +32,7 @@ help_text = "\n\nPlease enter command as --{runtime} {container_id} to apply ben
 
 config_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/config.json"
 rootfs_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/rootfs"
+pid_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/init.pid"
 hostconfig_path_docker = "/var/lib/docker/containers/{}/hostconfig.json"
 state_path_docker = "/run/docker/runtime-runc/moby/{}/state.json"
 
@@ -98,6 +99,8 @@ def docker_utils():
         print(f"CIS 5.1:     appArmor: {process_attributes[app_armor_profile_key]}")
         print(f"CIS 5.3:     permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
         print(Style.RESET_ALL + "")
+    with open(pid_docker) as pid_file:
+        pid_container = pid_file.read()
 
 
 def containerd_utils():
@@ -130,6 +133,9 @@ def format_paths():
     global config_path_crio
     global state_path_crio
     global config_path_containerd
+    global pid_docker
+
+    pid_docker = pid_docker.format(sys.argv[2])
 
     config_path_docker = config_path_docker.format(sys.argv[2])
     config_path_containerd = config_path_containerd.format(sys.argv[2])
