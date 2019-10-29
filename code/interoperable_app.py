@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import json
 import sys
 from pyfiglet import Figlet
@@ -35,24 +36,47 @@ rootfs_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/roo
 pid_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/init.pid"
 hostconfig_path_docker = "/var/lib/docker/containers/{}/hostconfig.json"
 state_path_docker = "/run/docker/runtime-runc/moby/{}/state.json"
+cpu_shares_docker = "/sys/fs/cgroup/cpu/docker/{}/cpu.shares"
+memory_limit_docker = "/sys/fs/cgroup/memory/docker/{}/memory.limit_in_bytes"
 
 
 config_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/config.json"
 state_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/state.json"
+cpu_shares_crio = "/sys/fs/cgroup/cpu/{}/cpu.shares"
+memory_limit_crio = "/sys/fs/cgroup/memory/{}/memory.limit_in_bytes"
+
+
 
 config_path_containerd = "/run/containerd/io.containerd.runtime.v2.task/default/{}/config.json"
 state_path_containerd = "/run/containerd/runc/default/{}/state.json"
 
+cpu_shares_containerd = "/sys/fs/cgroup/cpu/{}/cpu.shares"
+memory_limit_containerd = "/sys/fs/cgroup/memory/{}/memory.limit_in_bytes"
 
 # config.json attiributes
 app_armor_profile_key = "apparmorProfile"
 process_key = "process"
+root_key = "root"
+os_key = "linux"
+cgroups_key = "cgroupsPath"
+readonlyroot_crio = "readonly"
+annotations_crio = "annotations"
+privileged_crio = "io.kubernetes.cri-o.PrivilegedRuntime"
+ports_crio = "io.kubernetes.cri-o.PortMappings"
+host_network_crio = "io.kubernetes.cri-o.HostNetwork"
 capabilities_key = "capabilities"
 permitted_capabilities = "permitted"
 
 # hostconfig.json attributes
 security_opts_key = "SecurityOpt"
 priviliged_key = "Privileged"
+portBindings_key = "PortBindings"
+NetworkMode_key = "NetworkMode"
+ReadonlyRootfs_key = "ReadonlyRootfs"
+
+
+#containerd keys
+noNewPrivileges = "noNewPrivileges"
 
 
 if DEBUG == True:
@@ -99,8 +123,39 @@ def docker_utils():
         print(f"CIS 5.1:     appArmor: {process_attributes[app_armor_profile_key]}")
         print(f"CIS 5.3:     permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
         print(Style.RESET_ALL + "")
+        json_file.close()
+
+    with open(hostconfig_path_docker) as json_file:
+        data = json.load(json_file)
+        print(Fore.YELLOW)
+        print(f"CIS 5.4:     privileged: {data[priviliged_key]}")
+        print(f"CIS 5.7:     privileged ports: {data[portBindings_key]}")
+        print(f"CIS 5.8:     check ports: {data[portBindings_key]}")
+        print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")
+        print(f"CIS 5.12:     ReadonlyRootfs: {data[ReadonlyRootfs_key]}")
+        print(Style.RESET_ALL + "")
+        json_file.close()
+
+    with open(memory_limit_docker) as memory_limit:
+        mem_limit = memory_limit.read()
+        print(Fore.YELLOW)
+        print(f"CIS 5.10:     mem limit: {mem_limit}")
+        print(Style.RESET_ALL + "")
+        memory_limit.close()
+
+    with open(cpu_shares_docker) as cpu_shares:
+        cpu_share = cpu_shares.read()
+        print(Fore.YELLOW)
+        print(f"CIS 5.11:     CPU Share: {cpu_share}")
+        print(Style.RESET_ALL + "")
+        cpu_shares.close()
+
+
     with open(pid_docker) as pid_file:
         pid_container = pid_file.read()
+        print(f"Pid: {pid_container}")
+        pid_file.close()
+    
 
 
 def containerd_utils():
@@ -110,9 +165,28 @@ def containerd_utils():
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
         print(Fore.YELLOW)
 
-        print(f"CIS 5.1: appArmor: {appArmor}")
-        print(f"CIS 5.3:     permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
+        print(f"CIS 5.1:    AppArmor: {appArmor}")
+        print(f"CIS 5.3:    Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
+        print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
+
+        cgrouppath = data[os_key][cgroups_key]
+
+        cpu_share = cpu_shares_containerd.format(cgrouppath)
+        memory_limit = memory_limit_containerd.format(cgrouppath)
+
+        with open(memory_limit) as mem:
+            mem_result = mem.read()
+            print(f"CIS 5.10: Memory Limit in bytes: {mem_result}")
+            mem.close()
+
+        with open(cpu_share) as cpu:
+            cpu_result = cpu.read()
+            print(f"CIS 5.11: CPU Share: {cpu_result}")
+            cpu.close()
+
         print(Style.RESET_ALL + "")
+
+
 
 def crio_utils():
     print("**  CIS Benchmark for CRI-O. **")
@@ -122,8 +196,28 @@ def crio_utils():
         #print(data)
         
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
-        print(f"CIS 5.1: appArmor: {appArmor}")
-        print(f"CIS 5.3: permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
+        print(f"CIS 5.1: AppArmor: {appArmor}")
+        print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
+        print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+        print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
+        print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
+        print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
+        print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
+        cgrouppath = data[os_key][cgroups_key]
+        cpu_share = cpu_shares_crio.format(cgrouppath)
+        memory_limit = memory_limit_crio.format(cgrouppath)
+
+        with open(memory_limit) as mem:
+            mem_result = mem.read()
+            print(f"CIS 5.10: Memory Limit in bytes: {mem_result}")
+            mem.close()
+
+        with open(cpu_share) as cpu:
+            cpu_result = cpu.read()
+            print(f"CIS 5.11: CPU Share: {cpu_result}")
+            cpu.close()
+
+
         print(Style.RESET_ALL + "")
         
 def format_paths():
@@ -134,10 +228,16 @@ def format_paths():
     global state_path_crio
     global config_path_containerd
     global pid_docker
+    global cpu_shares_docker
+    global memory_limit_docker
+
 
     pid_docker = pid_docker.format(sys.argv[2])
 
     config_path_docker = config_path_docker.format(sys.argv[2])
+    cpu_shares_docker = cpu_shares_docker.format(sys.argv[2])
+    memory_limit_docker = memory_limit_docker.format(sys.argv[2])
+
     config_path_containerd = config_path_containerd.format(sys.argv[2])
     hostconfig_path_docker = hostconfig_path_docker.format(sys.argv[2])
     state_path_docker = state_path_docker.format(sys.argv[2])
