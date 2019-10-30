@@ -36,14 +36,17 @@ rootfs_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/roo
 pid_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/init.pid"
 hostconfig_path_docker = "/var/lib/docker/containers/{}/hostconfig.json"
 state_path_docker = "/run/docker/runtime-runc/moby/{}/state.json"
-cpu_shares_docker = "/sys/fs/cgroup/cpu/docker/{}/cpu.shares"
-memory_limit_docker = "/sys/fs/cgroup/memory/docker/{}/memory.limit_in_bytes"
+cpu_shares_docker = "/sys/fs/cgroup/cpu/{}/cpu.shares"
+memory_limit_docker = "/sys/fs/cgroup/memory/{}/memory.limit_in_bytes"
+
+pids_docker = "/sys/fs/cgroup/pids/{}/pids.max"
 
 
 config_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/config.json"
 state_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/state.json"
 cpu_shares_crio = "/sys/fs/cgroup/cpu/{}/cpu.shares"
 memory_limit_crio = "/sys/fs/cgroup/memory/{}/memory.limit_in_bytes"
+pid_limit_crio = "/sys/fs/cgroup/pids/{}/pids.max"
 
 
 
@@ -52,18 +55,27 @@ state_path_containerd = "/run/containerd/runc/default/{}/state.json"
 
 cpu_shares_containerd = "/sys/fs/cgroup/cpu/{}/cpu.shares"
 memory_limit_containerd = "/sys/fs/cgroup/memory/{}/memory.limit_in_bytes"
+pid_limit_containerd = "/sys/fs/cgroup/pids/{}/pids.max"
 
 # config.json attiributes
 app_armor_profile_key = "apparmorProfile"
 process_key = "process"
 root_key = "root"
 os_key = "linux"
+devices_key = "devices"
+resources_key = "resources"
 cgroups_key = "cgroupsPath"
+cgroups_parent_key = "CgroupParent"
+seccomp_key = "seccomp"
+mounts_key = "mounts"
+
 readonlyroot_crio = "readonly"
 annotations_crio = "annotations"
+cgroups_parent_crio = "io.kubernetes.cri-o.CgroupParent"
 privileged_crio = "io.kubernetes.cri-o.PrivilegedRuntime"
 ports_crio = "io.kubernetes.cri-o.PortMappings"
 host_network_crio = "io.kubernetes.cri-o.HostNetwork"
+seccomp_crio = "io.kubernetes.cri-o.SeccompProfilePath"
 capabilities_key = "capabilities"
 permitted_capabilities = "permitted"
 
@@ -77,6 +89,8 @@ ReadonlyRootfs_key = "ReadonlyRootfs"
 
 #containerd keys
 noNewPrivileges = "noNewPrivileges"
+config_key = "config"
+readonlyfs_key = "readonlyfs"
 
 
 if DEBUG == True:
@@ -120,35 +134,61 @@ def docker_utils():
         process_attributes = data[process_key]
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
         print(Fore.YELLOW)
-        print(f"CIS 5.1:     appArmor: {process_attributes[app_armor_profile_key]}")
-        print(f"CIS 5.3:     permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
+        print(f"CIS 5.1:     AppArmor: {process_attributes[app_armor_profile_key]}\n")
+        print(f"CIS 5.3:     Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}\n")
+        print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
+        print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
+        
+        #TODO: discuss long text
+        #print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
+        
         print(Style.RESET_ALL + "")
+
+        cgrouppath = data[os_key][cgroups_key]
+
+        print(f"CIS 5.24:     Confirm cgroup usage: {cgrouppath}\n")
+
+        memory_limit_docker_formatted = memory_limit_docker.format(cgrouppath)
+        cpu_shares_docker_formatted = cpu_shares_docker.format(cgrouppath)
+        pids_docker_formatted = pids_docker.format(cgrouppath)
+
+
+        with open(memory_limit_docker_formatted) as memory_limit:
+            mem_limit = memory_limit.read()
+            print(Fore.YELLOW)
+            print(f"CIS 5.10:     Mem Limit: {mem_limit}")
+            print(Style.RESET_ALL + "")
+            memory_limit.close()
+
+        with open(cpu_shares_docker_formatted) as cpu_shares:
+            cpu_share = cpu_shares.read()
+            print(Fore.YELLOW)
+            print(f"CIS 5.11:     CPU Share: {cpu_share}")
+            print(Style.RESET_ALL + "")
+            cpu_shares.close()
+
+        with open(pids_docker_formatted) as pids:
+            pids_limit = pids.read()
+            print(Fore.YELLOW)
+            print(f"CIS 5.28:     Use PIDs cgroup limit: {pids_limit}")
+            print(Style.RESET_ALL + "")
+            pids.close()
         json_file.close()
 
     with open(hostconfig_path_docker) as json_file:
         data = json.load(json_file)
         print(Fore.YELLOW)
-        print(f"CIS 5.4:     privileged: {data[priviliged_key]}")
-        print(f"CIS 5.7:     privileged ports: {data[portBindings_key]}")
-        print(f"CIS 5.8:     check ports: {data[portBindings_key]}")
+        print(f"CIS 5.4:     Privileged: {data[priviliged_key]}")
+        print(f"CIS 5.7:     Check Privileged ports: {data[portBindings_key]}")
+        print(f"CIS 5.8:     Check ports: {data[portBindings_key]}")
         print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")
         print(f"CIS 5.12:     ReadonlyRootfs: {data[ReadonlyRootfs_key]}")
+        print(f"CIS 5.13:     Check specific host-ip: {data[portBindings_key]}")
+        #print(f"CIS 5.24:     Confirm cgroup usage -parent: {data[cgroups_parent_key]}\n")
         print(Style.RESET_ALL + "")
         json_file.close()
 
-    with open(memory_limit_docker) as memory_limit:
-        mem_limit = memory_limit.read()
-        print(Fore.YELLOW)
-        print(f"CIS 5.10:     mem limit: {mem_limit}")
-        print(Style.RESET_ALL + "")
-        memory_limit.close()
 
-    with open(cpu_shares_docker) as cpu_shares:
-        cpu_share = cpu_shares.read()
-        print(Fore.YELLOW)
-        print(f"CIS 5.11:     CPU Share: {cpu_share}")
-        print(Style.RESET_ALL + "")
-        cpu_shares.close()
 
 
     with open(pid_docker) as pid_file:
@@ -168,11 +208,16 @@ def containerd_utils():
         print(f"CIS 5.1:    AppArmor: {appArmor}")
         print(f"CIS 5.3:    Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
         print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
+        print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
+        print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
+
 
         cgrouppath = data[os_key][cgroups_key]
+        print(f"CIS 5.24:    Check Cgroup path: {cgrouppath}")
 
         cpu_share = cpu_shares_containerd.format(cgrouppath)
         memory_limit = memory_limit_containerd.format(cgrouppath)
+        pid_limit = pid_limit_containerd.format(cgrouppath)
 
         with open(memory_limit) as mem:
             mem_result = mem.read()
@@ -184,7 +229,16 @@ def containerd_utils():
             print(f"CIS 5.11: CPU Share: {cpu_result}")
             cpu.close()
 
+        with open(pid_limit) as pid:
+            pids_limit = pid.read()
+            print(f"CIS 5.28:     Use PIDs cgroup limit: {pids_limit}")
+            pid.close()
+
         print(Style.RESET_ALL + "")
+    with open(state_path_containerd) as state_json:
+        data = json.load(state_json)
+        print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+        print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
 
 
 
@@ -199,13 +253,24 @@ def crio_utils():
         print(f"CIS 5.1: AppArmor: {appArmor}")
         print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
         print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+        print(f"CIS 5.5: Mounts: {data[mounts_key]}")
         print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
         print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
         print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
+        
         print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
+        print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
+        print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
+        print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
+        #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[annotations_crio][cgroups_parent_crio]}")
+
         cgrouppath = data[os_key][cgroups_key]
+        print(f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
+
+
         cpu_share = cpu_shares_crio.format(cgrouppath)
         memory_limit = memory_limit_crio.format(cgrouppath)
+        pid_limit = pid_limit_crio.format(cgrouppath)
 
         with open(memory_limit) as mem:
             mem_result = mem.read()
@@ -217,6 +282,10 @@ def crio_utils():
             print(f"CIS 5.11: CPU Share: {cpu_result}")
             cpu.close()
 
+        with open(pid_limit) as pid:
+            pid_max = pid.read()
+            print(f"CIS 5.28: Pid Max: {pid_max}")
+            cpu.close()
 
         print(Style.RESET_ALL + "")
         
@@ -227,18 +296,19 @@ def format_paths():
     global config_path_crio
     global state_path_crio
     global config_path_containerd
+    global state_path_containerd
     global pid_docker
-    global cpu_shares_docker
-    global memory_limit_docker
+
 
 
     pid_docker = pid_docker.format(sys.argv[2])
 
     config_path_docker = config_path_docker.format(sys.argv[2])
-    cpu_shares_docker = cpu_shares_docker.format(sys.argv[2])
-    memory_limit_docker = memory_limit_docker.format(sys.argv[2])
+    #cpu_shares_docker = cpu_shares_docker.format(sys.argv[2])
+    #memory_limit_docker = memory_limit_docker.format(sys.argv[2])
 
     config_path_containerd = config_path_containerd.format(sys.argv[2])
+    state_path_containerd = state_path_containerd.format(sys.argv[2])
     hostconfig_path_docker = hostconfig_path_docker.format(sys.argv[2])
     state_path_docker = state_path_docker.format(sys.argv[2])
     config_path_crio = config_path_crio.format(sys.argv[2])
