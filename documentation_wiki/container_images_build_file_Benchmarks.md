@@ -10,7 +10,10 @@ Next steps:
 Begin designing code for Docker case for 4.1, 4.5
 Determine how to find images in CRI-O
 Determine if possible to inspect image info in containerd; if not, may not be possible to have full implementation unless information exists elsewhere
+*Imagefiles should be in /var/lib/docker (or perhaps similar)*
 Determine if container trust applies in CRI-O case (arguably does not in containerd case, as containerd does not provide mechanism to build the images)
+*refer to https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile/ for sample Dockerfile - pull and make edits on local copy as necessary to run tests*
+
 
 ***
 
