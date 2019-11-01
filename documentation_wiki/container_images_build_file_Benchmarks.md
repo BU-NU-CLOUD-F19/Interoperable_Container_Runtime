@@ -18,8 +18,13 @@ Determine if container trust applies in CRI-O case (arguably does not in contain
 ***
 Local image store locations:
 
-Docker - json stored in /var/lib/docker/image/overlay2/imagedb/content/sha256/<Image ID>  
-*but then where is reference to the images ID stored?*
+Docker - image label noted in Config.Image when inspecting Container.  
+
+Questions?  
+a) what file does this get pulled from (to be able to grab without running Docker command directly)  
+b) how to associate the image label (e.g. Centos) with the hash label?
+
+json stored in /var/lib/docker/image/overlay2/imagedb/content/sha256/<Image ID>  
 
 CRI-O - json stored in /var/lib/containers/storage/overlay-images/<Image ID>/mainfest  
 *again, how to get ID to reference to access the file?*
