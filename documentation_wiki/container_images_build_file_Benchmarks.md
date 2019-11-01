@@ -7,7 +7,10 @@ containerd uses Docker images. Supposedly has method to "manage" images, but thi
 
 Next steps: 
 
-Begin designing code for Docker case for 4.1, 4.5  
+Begin designing code for Docker case for 4.1, 4.5; begin prototyping based on local copies to ensure syntax. 
+refer to https://github.com/nginxinc/docker-nginx/blob/master/stable/alpine/Dockerfile/ for sample Dockerfile - pull and make edits on copy to generate alterante images; determine how to identify changes in env variables for app testing. 
+
+
 Determine how to find images in CRI-O  
 Determine if possible to inspect image info in containerd; if not, may not be possible to have full implementation unless information exists elsewhere  
 *Imagefiles should be in /var/lib/docker (or perhaps similar)*  
@@ -23,6 +26,8 @@ Docker - image label noted in Config.Image when inspecting Container.
 Questions?  
 a) what file does this get pulled from (to be able to grab without running Docker command directly)  
 b) how to associate the image label (e.g. Centos) with the hash label?
+
+Answers, in /var/lib/docker/containers/<Container ID>/config.v2.json, property Image contains sha hash
 
 json stored in /var/lib/docker/image/overlay2/imagedb/content/sha256/<Image ID>  
 
