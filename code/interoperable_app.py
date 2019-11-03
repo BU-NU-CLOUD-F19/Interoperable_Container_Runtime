@@ -129,7 +129,7 @@ def main():
 
 
 
-def cat_n_grep(filename, lookfor, debug=False):
+def cat_n_grep(filename, lookfor, debug=False): #equivalent to "cat filename | grep lookfor"
     found_it = False
     file = open(filename)
     text = file.read()
@@ -141,11 +141,12 @@ def getpid(runtime):
     if (runtime == 'crio'):
         with open(state_path_crio) as json_file:
             data = json.load(json_file)
-            p_id = data['pid'] (if 'pid' in data) else False
+            p_id = data['pid'] if ('pid' in data) else False
             return p_id
-    if (runtime == 'docker'):
-
-    if (runtime == 'containerd'):
+    if (runtime == 'docker'): #todo
+        return False
+    if (runtime == 'containerd'): #todo
+        return False
 
 
 def docker_utils():
@@ -271,19 +272,41 @@ def crio_utils():
         
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
         print(f"CIS 5.1: AppArmor: {appArmor}")
+        #no 5.2 yet
         print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
-        print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
-        print(f"CIS 5.5: Mounts: {data[mounts_key]}")
+        
+        #5.4
+        if (privileged_crio in (data[annotations_crio])): 
+            print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+        else:
+            print('CIS 5.4: Privileged runtime: Failed. Could not find: ', privileged_crio)
+        
+        #5.5
+        if (mounts_key in data):
+            print(f"CIS 5.5: Mounts: {data[mounts_key]}")
+        else:
+            print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
 
+        #5.6
         container_pid = getpid('crio')
         if (container_pid):
             ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh', True)
-
         print(f"CIS 5.6: SSH Within containers: {ssh_check}")
         
-        print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
-        print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
-        print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
+        #5.7 & 5.8
+        if (ports_crio in data[annotations_crio]):
+            print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
+            print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
+        else:
+            print('CIS 5.7: Privileged port used: Failed. Could not find ', ports_crio, sep=' ')
+            print('CIS 5.8: Check port: Failed. Could not find ', ports_crio, sep=' ')
+
+        #5.9
+        if (host_network_crio in data[annotations_crio]):
+            print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
+        else:
+            print('CIS 5.9: Host Network: Failed. Could not find', host_network_crio)
+        
         
         print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
         print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
