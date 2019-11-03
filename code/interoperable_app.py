@@ -93,6 +93,36 @@ config_key = "config"
 readonlyfs_key = "readonlyfs"
 
 
+#Benchmark strings
+#Five point ...    V because four also starts with F
+Vp1 = 'CIS 5.1:    AppArmor:'
+Vp2 = 'CIS 5.2:    Verify SELinux security options'
+Vp3 = 'CIS 5.3:    Permitted capabilities:'
+Vp4 = 'CIS 5.4:    Privileged runtime:'
+Vp5 = 'CIS 5.5:    Mounts: '
+Vp6 = 'CIS 5.6:    SSH Within containers:'
+Vp7 = 'CIS 5.7:    Privileged ports used:'
+Vp8 = 'CIS 5.8:    Check ports:'
+Vp9 = 'CIS 5.9:    Host Network:'
+Vp10 = 'CIS 5.10:    Memory Limit in bytes:'
+Vp11 = 'CIS 5.11:    CPU Share: '
+Vp12 = 'CIS 5.12:    Read-only rootfs:'
+Vp13 = 'CIS 5.13:    Check specific host-ip:'
+Vp14 = "CIS 5.14:    'on-failure' Restart Policy:"
+Vp15 = "CIS 5.15:    Host's process namespace not shared:"
+Vp16 = "CIS 5.16:    Host's IPC namespace not shared:"
+Vp17 = 'CIS 5.17:    Host devices:' 
+Vp18 = 'CIS 5.18:    Override default ulimit at runtime if needed:'
+Vp19 = 'CIS 5.19:    Mount Propagation not Shared:'
+Vp20 = "CIS 5.20:    Host's UTS namespace not shared:"
+Vp21 = 'CIS 5.21:    Check Seccomp profile:'
+Vp22 = 'CIS 5.22:     Privileged docker exec:'
+Vp23 = 'CIS 5.23:     User docker exec'
+Vp24 = 'CIS 5.24:     Confirm cgroup usage:'
+
+
+
+
 if DEBUG == True:
     config_path_docker = "../../../docker-container-fs/config.json"
     hostconfig_path_docker = "../../../docker-container-fs-selinux/hostconfig.json"
@@ -291,25 +321,49 @@ def crio_utils():
         container_pid = getpid('crio')
         if (container_pid):
             ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh', True)
-        print(f"CIS 5.6: SSH Within containers: {ssh_check}")
+        print(Vp6, ssh_check)
         
         #5.7 & 5.8
         if (ports_crio in data[annotations_crio]):
-            print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
-            print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
+            print(Vp7, data[annotations_crio][ports_crio])
+            print(Vp8, data[annotations_crio][ports_crio])
         else:
-            print('CIS 5.7: Privileged port used: Failed. Could not find ', ports_crio, sep=' ')
-            print('CIS 5.8: Check port: Failed. Could not find ', ports_crio, sep=' ')
+            print(Vp7, 'Failed. Could not find ', ports_crio, sep=' ')
+            print(Vp8, 'Failed. Could not find ', ports_crio, sep=' ')
 
         #5.9
         if (host_network_crio in data[annotations_crio]):
-            print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
+            print(Vp9, data[annotations_crio][host_network_crio], sep=' ')
         else:
-            print('CIS 5.9: Host Network: Failed. Could not find', host_network_crio)
+            print(Vp9, host_network_crio, sep=' ')
         
-        
-        print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
-        print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
+        #5.10        
+        with open(memory_limit) as mem:
+            mem_result = mem.read()
+            print(f"CIS 5.10: Memory Limit in bytes: {mem_result}")
+            mem.close()
+
+        #5.11
+        with open(cpu_share) as cpu:
+            cpu_result = cpu.read()
+            print(f"CIS 5.11: CPU Share: {cpu_result}")
+            cpu.close()
+
+        #5.12
+        if (root_key in data):
+            if (readonlyroot_crio in data[root_key]):
+                print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
+            else:
+                print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
+        else:
+            print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
+
+        #5.13
+        if (ports_crio in data[annotations_crio]):
+            print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
+        else:
+            print('CIS 5.13: Check specific host-ip: Failed. Could not find', ports_crio, sep=' ') 
+
         print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
         print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
         #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[annotations_crio][cgroups_parent_crio]}")
@@ -322,16 +376,8 @@ def crio_utils():
         memory_limit = memory_limit_crio.format(cgrouppath)
         pid_limit = pid_limit_crio.format(cgrouppath)
 
-        with open(memory_limit) as mem:
-            mem_result = mem.read()
-            print(f"CIS 5.10: Memory Limit in bytes: {mem_result}")
-            mem.close()
-
-        with open(cpu_share) as cpu:
-            cpu_result = cpu.read()
-            print(f"CIS 5.11: CPU Share: {cpu_result}")
-            cpu.close()
-
+        
+        
         with open(pid_limit) as pid:
             pid_max = pid.read()
             print(f"CIS 5.28: Pid Max: {pid_max}")
