@@ -337,6 +337,14 @@ def crio_utils():
         else:
             print(Vp9, host_network_crio, sep=' ')
         
+        cgrouppath = data[os_key][cgroups_key]
+        print(f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
+
+        cpu_share = cpu_shares_crio.format(cgrouppath)
+        memory_limit = memory_limit_crio.format(cgrouppath)
+        pid_limit = pid_limit_crio.format(cgrouppath)
+
+
         #5.10        
         with open(memory_limit) as mem:
             mem_result = mem.read()
@@ -368,14 +376,7 @@ def crio_utils():
         print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
         #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[annotations_crio][cgroups_parent_crio]}")
 
-        cgrouppath = data[os_key][cgroups_key]
-        print(f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
-
-
-        cpu_share = cpu_shares_crio.format(cgrouppath)
-        memory_limit = memory_limit_crio.format(cgrouppath)
-        pid_limit = pid_limit_crio.format(cgrouppath)
-
+        
         
         
         with open(pid_limit) as pid:
