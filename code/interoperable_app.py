@@ -120,7 +120,7 @@ def main():
         return
     if DEBUG == False:
         format_paths()
-    if sys.argv[1] == "--crio" or sys.argv[1] == "-crio" or sys.argv[1] == "--c" or sys.argv[1] == "-c":
+    if sys.argv[1] == "--crio" or sys.argv[1] == "-crio" or sys.argv[1] == "-cri-o" or sys.argv[1] == "--c" or sys.argv[1] == "-c":
         crio_utils()
     elif sys.argv[1] == "--docker" or sys.argv[1] == "-docker" or sys.argv[1] == "--d" or sys.argv[1] == "-d":
         docker_utils()
@@ -128,11 +128,31 @@ def main():
         containerd_utils()
 
 
+
+def cat_n_grep(filename, lookfor, debug=False):
+    found_it = False
+    file = open(filename)
+    text = file.read()
+    if (debug): print('cat_n_grep read: ', text, sep=' ')
+    return True if (lookfor in text) else False
+
+
+def getpid(runtime):
+    if (runtime == 'crio'):
+        with open(state_path_crio) as json_file:
+            data = json.load(json_file)
+            p_id = data['pid'] (if 'pid' in data) else False
+            return p_id
+    if (runtime == 'docker'):
+
+    if (runtime == 'containerd'):
+
+
 def docker_utils():
     with open(config_path_docker) as json_file:
         data = json.load(json_file)
         process_attributes = data[process_key]
-        appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
+        appArmor = process_attributes[app_armor_profile_key] if (app_armor_profile_key in process_attributes) else ('NOT SET!')
         print(Fore.YELLOW)
         print(f"CIS 5.1:     AppArmor: {process_attributes[app_armor_profile_key]}\n")
         print(f"CIS 5.3:     Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}\n")
@@ -254,6 +274,13 @@ def crio_utils():
         print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
         print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
         print(f"CIS 5.5: Mounts: {data[mounts_key]}")
+
+        container_pid = getpid('crio')
+        if (container_pid):
+            ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh', True)
+
+        print(f"CIS 5.6: SSH Within containers: {ssh_check}")
+        
         print(f"CIS 5.7: Privileged ports used: {data[annotations_crio][ports_crio]}")
         print(f"CIS 5.8: Check ports: {data[annotations_crio][ports_crio]}")
         print(f"CIS 5.9: Host Network: {data[annotations_crio][host_network_crio]}")
