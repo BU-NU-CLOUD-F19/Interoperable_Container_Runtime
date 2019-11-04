@@ -34,7 +34,9 @@ json stored in /var/lib/docker/image/overlay2/imagedb/content/sha256/<Image ID>
 CRI-O - json stored in /var/lib/containers/storage/overlay-images/<Image ID>/mainfest  
 *again, how to get ID to reference to access the file?*
  
-containerd - ?????
+containerd - per Justin, the container files are in /var/lib/containerd/io.containerd.content.v1.content/blobs/sha256/  
+ 
+ open question - where does the container itself reference which image it is using?
 
 files for containers generally appear to be stored in /var/lib/containerd, but information absent. 
 
