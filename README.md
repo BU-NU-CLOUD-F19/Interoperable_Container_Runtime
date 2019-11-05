@@ -183,4 +183,5 @@ Demo-2. https://docs.google.com/presentation/d/13oyb9Et6FaSwatqjOO1UZ1DuA2F75J4_
 
 Demo-3. https://docs.google.com/presentation/d/11xGzlamKRxR4OkDQJ18vTwfvxp4XdIXRqlegtRix78o/edit?usp=sharing
 
+Kafka https://docs.google.com/presentation/d/1s-PE9H6SfO_vgoV0IfJc345ZzA3LWJY5YoIdYANDnd0/edit?ts=5db0948e#slide=id.p
 
