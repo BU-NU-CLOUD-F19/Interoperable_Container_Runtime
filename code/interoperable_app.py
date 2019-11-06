@@ -3,6 +3,8 @@ import json
 import sys
 from pyfiglet import Figlet
 from colorama import Fore, Back, Style 
+import os
+
 
 
 #pip3 install pyfiglet
@@ -244,6 +246,8 @@ def docker_utils():
 
     with open(pid_docker) as pid_file:
         pid_container = pid_file.read()
+        print(f"CIS 5.2 SELinux profile:")
+        os.system(f'ps -eZ | grep {pid_container}')
         print(f"Pid: {pid_container}")
         pid_file.close()
     
