@@ -133,10 +133,11 @@ Release #3 (Completed):
 * Implement and Demo check on Benchmark 5.1: Do not disable AppArmor Profile, across all in-scope Runtimes
 * Implement and Demo check on Benchmark 5.3: Restrict Linux Kernel Capabilities within containers, across all in-scope Runtimes 
 
-Release #4 (due by Week 11): 
+Release #4 (Completed): 
 
-* Implement and Demo check on Benchmark 5.2: Verify SELinux security options, across all in-scope Runtimes
-* Implement and Demo check on Benchmark 5.4: Do not use privileged containers, across all in-scope Runtimes
+* Implement and Demo check on Benchmark 5.10 Limit memory usage for container (Scored)
+* Implement and Demo check on Benchmark 5.11 Set container CPU priority appropriately (Scored)
+* Implement and Demo check on Benchmark 5.24 Confirm cgroup usage (Scored)
 * Begin evaluating documentation for Container Images and Build File checks
 
 Release #5 (due by Week 12): 
