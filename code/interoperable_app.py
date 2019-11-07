@@ -32,6 +32,7 @@ DEBUG = False
 custom_fig = Figlet(font='doom')
 help_text = "\n\nPlease enter command as --{runtime} {container_id} to apply benchmark tests\n\nExample: interoperable_app --crio 123134"
 
+app_armor_global = "/proc/{}/attr/apparmor/current"
 
 config_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/config.json"
 rootfs_path_docker = "/run/containerd/io.containerd.runtime.v1.linux/moby/{}/rootfs"
@@ -53,6 +54,7 @@ pid_limit_crio = "/sys/fs/cgroup/pids/{}/pids.max"
 
 
 config_path_containerd = "/run/containerd/io.containerd.runtime.v2.task/default/{}/config.json"
+pid_containerd = "/run/containerd/io.containerd.runtime.v2.task/default/{}/init.pid"
 state_path_containerd = "/run/containerd/runc/default/{}/state.json"
 
 cpu_shares_containerd = "/sys/fs/cgroup/cpu/{}/cpu.shares"
@@ -80,6 +82,7 @@ host_network_crio = "io.kubernetes.cri-o.HostNetwork"
 seccomp_crio = "io.kubernetes.cri-o.SeccompProfilePath"
 capabilities_key = "capabilities"
 permitted_capabilities = "permitted"
+cgroupsPath_key = "cgroupsPath"
 
 # hostconfig.json attributes
 security_opts_key = "SecurityOpt"
@@ -87,12 +90,24 @@ priviliged_key = "Privileged"
 portBindings_key = "PortBindings"
 NetworkMode_key = "NetworkMode"
 ReadonlyRootfs_key = "ReadonlyRootfs"
+RestartPolicy_key = "RestartPolicy"
+PidMode_key = "PidMode"
+IpcMode_key = "IpcMode"
+Devices_key = "Devices"
+Ulimits_key = "Ulimits"
+UTSMode_key = "UTSMode"
+SecurityOpt_key = "SecurityOpt"
+
 
 
 #containerd keys
 noNewPrivileges = "noNewPrivileges"
 config_key = "config"
 readonlyfs_key = "readonlyfs"
+namespace_paths_key = "namespace_paths"
+NEWPID_key = "NEWPID"
+NEWIPC_key = "NEWIPC"
+NEWUTS_key = "NEWUTS"
 
 
 #Benchmark strings
@@ -187,7 +202,7 @@ def docker_utils():
         process_attributes = data[process_key]
         appArmor = process_attributes[app_armor_profile_key] if (app_armor_profile_key in process_attributes) else ('NOT SET!')
         print(Fore.YELLOW)
-        print(f"CIS 5.1:     AppArmor: {process_attributes[app_armor_profile_key]}\n")
+        #print(f"CIS 5.1:     AppArmor: {process_attributes[app_armor_profile_key]}\n")
         print(f"CIS 5.3:     Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}\n")
         print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
         print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
@@ -237,6 +252,15 @@ def docker_utils():
         print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")
         print(f"CIS 5.12:     ReadonlyRootfs: {data[ReadonlyRootfs_key]}")
         print(f"CIS 5.13:     Check specific host-ip: {data[portBindings_key]}")
+        print(f"CIS 5.14:     Set the 'on-failure' container restart policy to 5 (Scored): {data[RestartPolicy_key]}")
+        print(f"CIS 5.15:     Do not share the host's process namespace (Scored): {data[PidMode_key]}")
+        print(f"CIS 5.16:     Do not share the host's IPC namespace (Scored): {data[IpcMode_key]}")
+        print(f"CIS 5.17:     Do not directly expose host devices to containers (Not Scored): {data[Devices_key]}")
+        print(f"CIS 5.18:     Override default ulimit at runtime only if needed (Not Scored): {data[Ulimits_key]}")
+        print(f"CIS 5.20:     Do not share the host's UTS namespace (Scored): {data[UTSMode_key]}")
+        print(f"CIS 5.25:     Restrict container from acquiring additional privileges (Scored): {data[SecurityOpt_key]}")
+        
+        
         #print(f"CIS 5.24:     Confirm cgroup usage -parent: {data[cgroups_parent_key]}\n")
         print(Style.RESET_ALL + "")
         json_file.close()
@@ -246,6 +270,8 @@ def docker_utils():
 
     with open(pid_docker) as pid_file:
         pid_container = pid_file.read()
+        app_armor = app_armor_global.format(pid_container)
+        print(f"CIS 5.1:    AppArmor: {app_armor}")
         print(f"CIS 5.2 SELinux profile:")
         os.system(f'ps -eZ | grep {pid_container}')
         print(f"Pid: {pid_container}")
@@ -254,13 +280,28 @@ def docker_utils():
 
 
 def containerd_utils():
+    with open(pid_containerd) as pid_file:
+        pid_container = pid_file.read()
+
+
+        app_armor = app_armor_global.format(pid_container)
+        with open(app_armor) as app_armor_f:
+            print(f"CIS 5.1:    AppArmor: {app_armor_f.read()}")
+        print(f"CIS 5.2 SELinux profile:")
+        os.system(f'ps -eZ | grep {pid_container}')
+        print(f"Pid: {pid_container}")
+
+
+
+        pid_file.close()
     with open(config_path_containerd) as json_file:
         data = json.load(json_file)
         process_attributes = data[process_key]
         appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
         print(Fore.YELLOW)
 
-        print(f"CIS 5.1:    AppArmor: {appArmor}")
+
+        #print(f"CIS 5.1:    AppArmor: {appArmor}")
         print(f"CIS 5.3:    Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
         print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
         print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
@@ -292,20 +333,41 @@ def containerd_utils():
         print(Style.RESET_ALL + "")
     with open(state_path_containerd) as state_json:
         data = json.load(state_json)
+
         print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+        print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
+        print(f"CIS 5.15:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
+        print(f"CIS 5.15:    Do not share the host's uts namespace (Scored): {data[namespace_paths_key][NEWUTS_key]}")
+        
         print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
+        
+
+
+
 
 
 
 def crio_utils():
     print("**  CIS Benchmark for CRI-O. **")
+
+    container_pid = getpid('crio')
+    app_armor = app_armor_global.format(container_pid)
+
+    with open(app_armor) as app_armor_f:
+        print(f"CIS 5.1:    AppArmor: {app_armor_f.read()}")
+
+    print(f"CIS 5.2 SELinux profile:")
+    os.system(f'ps -eZ | grep {container_pid}')
+    print(f"Pid: {container_pid}")
+
+
     with open(config_path_crio) as json_file:
         data = json.load(json_file)
         process_attributes = data[process_key]
         #print(data)
         
-        appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
-        print(f"CIS 5.1: AppArmor: {appArmor}")
+        #appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
+        #print(f"CIS 5.1: AppArmor: {appArmor}")
         #no 5.2 yet
         print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
         
@@ -322,7 +384,7 @@ def crio_utils():
             print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
 
         #5.6
-        container_pid = getpid('crio')
+
         if (container_pid):
             ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh', True)
         print(Vp6, ssh_check)
@@ -378,7 +440,7 @@ def crio_utils():
 
         print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
         print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
-        #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[annotations_crio][cgroups_parent_crio]}")
+        #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[os_key][cgroupsPath_key]}")
 
         
         
@@ -399,11 +461,13 @@ def format_paths():
     global config_path_containerd
     global state_path_containerd
     global pid_docker
+    global pid_containerd
+
 
 
 
     pid_docker = pid_docker.format(sys.argv[2])
-
+    pid_containerd = pid_containerd.format(sys.argv[2])
     config_path_docker = config_path_docker.format(sys.argv[2])
     #cpu_shares_docker = cpu_shares_docker.format(sys.argv[2])
     #memory_limit_docker = memory_limit_docker.format(sys.argv[2])
