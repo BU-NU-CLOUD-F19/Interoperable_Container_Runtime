@@ -33,6 +33,9 @@ json stored in /var/lib/docker/image/overlay2/imagedb/content/sha256/<Image ID>
 
 CRI-O - json stored in /var/lib/containers/storage/overlay-images/<Image ID>/mainfest  
 *again, how to get ID to reference to access the file?*
+ multiple levels of indirection - the image is contained in the config.json file (though somehow not universally, need to follow up on how the containers were created in the first place), but the ID used in the CRI-O files does not match the id/hash in the container config, so must consult images.json in overlay-images. 
+ 
+ Follow up question - because these files can be changed in future updates, is there an interface that can be exploited to get the necessary information?
  
 containerd - per Justin, the container files are in /var/lib/containerd/io.containerd.content.v1.content/blobs/sha256/  
  
