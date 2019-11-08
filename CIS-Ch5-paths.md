@@ -1,5 +1,5 @@
 CIS Benchmark Chapter 5 for Docker
-| Number | Definition | Implementation
+| Number | Definition | Implementation |
 | ------------- | ------------- | ------------- |
 
 |5.1		|Do not disable AppArmor Profile (Scored)	|/proc/{pid}/attr/apparmor/current	|
