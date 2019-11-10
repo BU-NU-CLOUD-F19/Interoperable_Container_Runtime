@@ -386,8 +386,8 @@ def crio_utils():
         #5.6
 
         if (container_pid):
-            ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh', True)
-        print(Vp6, ssh_check)
+            ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh')
+        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
         
         #5.7 & 5.8
         if (ports_crio in data[annotations_crio]):
