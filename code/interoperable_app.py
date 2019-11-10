@@ -111,6 +111,7 @@ NEWUTS_key = "NEWUTS"
 
 
 #Benchmark strings
+cnf = 'Could not find'
 #Five point ...    V because four also starts with F
 Vp1 = 'CIS 5.1:    AppArmor:'
 Vp2 = 'CIS 5.2:    Verify SELinux security options'
@@ -247,11 +248,28 @@ def docker_utils():
         data = json.load(json_file)
         print(Fore.YELLOW)
         print(f"CIS 5.4:     Privileged: {data[priviliged_key]}")
-        print(f"CIS 5.7:     Check Privileged ports: {data[portBindings_key]}")
-        print(f"CIS 5.8:     Check ports: {data[portBindings_key]}")
-        print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")
+
+        if (portBindings_key in data):
+        #print(f"CIS 5.7:     Check Privileged ports: {data[portBindings_key]}")
+        #print(f"CIS 5.8:     Check ports: {data[portBindings_key]}")
+            print(Vp7, data[portBindings_key], sep=' ')
+            print(Vp8, data[portBindings_key], sep=' ')
+        else:
+            print(Vp7, 'Failed ', cnf, portBindings_key, sep=' ')
+            print(Vp8, 'Failed '. cnf, portBindings_key, sep=' ')
+    
+        #print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")        
+        if (NetworkMode_key in data):
+            print(Vp9, data[NetworkMode_key])
+        else:
+            print(Vp9, cnf, NetworkMode_key)
+
+
         print(f"CIS 5.12:     ReadonlyRootfs: {data[ReadonlyRootfs_key]}")
         print(f"CIS 5.13:     Check specific host-ip: {data[portBindings_key]}")
+        #For things like this where it keeps reusing some data in non-continuous benchmarks maybe we should have a 
+        #list of strings in order for the benchmarks but fill them out in the order the data is accessed, Just for readability and such
+        #What do you guys think? Like i could stash this in the part7/8 bit
         print(f"CIS 5.14:     Set the 'on-failure' container restart policy to 5 (Scored): {data[RestartPolicy_key]}")
         print(f"CIS 5.15:     Do not share the host's process namespace (Scored): {data[PidMode_key]}")
         print(f"CIS 5.16:     Do not share the host's IPC namespace (Scored): {data[IpcMode_key]}")
