@@ -23,15 +23,49 @@ image_file_path_crio = "/var/lib/containers/storage/overlay-images/{}"
 image_file_ctrd = "/var/lib/containerd/io.containerd.content.v1.content/blobs/sha256/{}"
 
 # image file attributes
-config_key = "config"
-user_key = "User"
-health_key = "Healthcheck"
-history_key = "history"
+config_key = "config" # holds basic configuration attributes
+user_key = "User" # User id, if present, found in config
+health_key = "Healthcheck" # Healthcheck instruction, if present, found in config
+history_key = "history" # holds updates to the underlying image
+created_key = "created_by" # instruction that caused the update
 
 # Benchmark check strings
 Fp1 = "CIS 4.1: Create a user for the conatiner: "
 Fp6 = "CIS 4.6: Add HEALTHCHECK instruction to the container image: "
 Fp9 = "CIS 4.9: Use COPY instead of ADD in Dockerfile: "
+
+# Define functions to execute each check
+def userid_check(userid):
+	# Perform check 4.1, create a user
+	if userid == 'NOT SET!':
+		print(f"{Fp1} " + Fore.RED + f"FAILURE, USER ID {userid}")
+		print(Style.RESET_ALL + '')
+	else:
+		print(f"{Fp1} " + Fore.GREEN + f"PASS, USER ID = {userid}")
+		print(Style.RESET_ALL + '')
+
+def healthcheck_check(healthcheck):
+	# Perform check 4.6, add HELATHCHECK instruction
+	if healthcheck == 'NOT SET!':
+		print(f"{Fp6} " + Fore.RED + f"FAILURE, HEALTHCHECK INSTRUCTIONS {healthcheck}")
+		print(Style.RESET_ALL + '')
+	else:
+		print(f"{Fp6} " + Style.GREEN + f"PASS, HEALTHCHECK INSTRUCTIONS {healthcheck}")
+		print(Style.RESET_ALL + '')
+
+def history_check(history):
+	# Perform check 4.9, use COPY not ADD
+	print(f'{Fp9}')
+	for line in history:
+		if 'ADD' in line[created_key]:
+			print(Fore.RED + f'FAILURE, {line}')
+			print(Style.RESET_ALL + '')
+		elif 'COPY' in line[created_key]:
+			print(Fore.GREEN + f'PASS, {line}')
+			print(Style.RESET_ALL + '')
+		else:
+			print(Fore.YELLOW + f'N/A, {line}')
+			print(Style.RESET_ALL + '')
 
 # helper to print help function
 def help_func():
@@ -50,6 +84,7 @@ def docker_inspect_image():
 	global user_key
 	global health_key
 	global history_key
+	global created_key
 
 	if sys.argv[1] and sys.argv[1] == "--docker" or sys.argv[1] == "--d":
 		config_path_docker = config_path_docker.format(sys.argv[2])
@@ -64,28 +99,14 @@ def docker_inspect_image():
 				image_data = json.load(image_json)
 				# userid and healthcheck are sub attributes of config attribute
 				image_config = image_data[config_key]
-				# 4.1, user created
 				userid = image_config[user_key] if image_config[user_key] is not '' else 'NOT SET!'
-				# 4.6, healthcheck instruction exists
 				healthcheck = image_config[health_key] if health_key in image_config else 'NOT SET!'
-				# history is its own attibute, stores a new line for each history line
-				# 4.9, Use Copy not Add
+				# history in its own attribute
 				history = image_data[history_key]
 				# print result of each check
-				if userid == 'NOT SET!':
-					print(Fore.RED + f"{Fp1} FAILURE, USER ID {userid}")
-					print(Style.RESET_ALL + '')
-				else:
-					print(Fore.GREEN + f"{Fp1} PASS, USER ID = {userid}")
-					print(Style.RESET_ALL + '')
-				if healthcheck == 'NOT SET!':
-					print(Fore.RED + f"{Fp6} FAILURE, HEALTHCHECK INSTRUCTIONS {healthcheck}")
-					print(Style.RESET_ALL + '')
-				else:
-					print(Style.GREEN + f"{Fp6} PASS, HEALTHCHECK INSTRUCTIONS {healthcheck}")
-					print(Style.RESET_ALL + '')
-				print(f'{Fp9}')
-				for x in history: print(f'{x}')
+				userid_check(userid)
+				healthcheck_check(healthcheck)
+				history_check(history)			
 		return True
 	return False
 
