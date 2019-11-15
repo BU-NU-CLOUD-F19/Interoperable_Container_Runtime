@@ -32,9 +32,12 @@ history_key = "history" # holds updates to the underlying image
 created_key = "created" # timestamp of instruction
 created_by_key = "created_by" # instruction that caused the update
 
+trust_key = 'DOCKER_CONTENT_TRUST' # key for enviornment variable
+
 # Benchmark check strings
 Fp1 = "CIS 4.1: Create a user for the conatiner: "
 Fp2 = "CIS 4.2: Use trusted base images for containers: "
+Fp5 = "CIS 4.5: Enable Content Trust for Docker: "
 Fp6 = "CIS 4.6: Add HEALTHCHECK instruction to the container image: "
 Fp9 = "CIS 4.9: Use COPY instead of ADD in Dockerfile: "
 
@@ -83,6 +86,15 @@ def trusted_image_check(imageid):
 			print(f"{Fp2}" + Fore.RED + f'FAILURE: IMAGE {imageid} ON BLOCKLIST')
 		else:
 			print(f"{Fp2} " + Fore.YELLOW + f'REQUIRES FOLLOW UP: UNIDENTIFIED SOURCE. PLEASE VALIDATE SOURCE OF IMAGE {imageid} WITH SYSADMIN')
+	print(Style.RESET_ALL + '')
+
+def content_trust_check():
+	#Perform check 4.5, enable trust - tied to enviornment variable
+	content_trust = os.environ.get(trust_key,'')
+	if content_trust == '1':
+		print(f"{Fp5} " + Fore.GREEN + f'PASS, {trust_key} IS 1')
+	else:
+		print(f'{Fp5}' + Fore.RED + f'FAILURE, {trust_key} IS NOT 1')
 	print(Style.RESET_ALL + '')
 
 def healthcheck_check(healthcheck):
@@ -158,6 +170,7 @@ def docker_inspect_image():
 				# print result of each check
 				userid_check(userid)
 				trusted_image_check(image_id)
+				content_trust_check()
 				healthcheck_check(healthcheck)
 				history_check(history)			
 		return True
