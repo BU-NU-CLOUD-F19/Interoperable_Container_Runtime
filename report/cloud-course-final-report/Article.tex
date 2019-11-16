@@ -1,0 +1,78 @@
+\documentclass[times, twoside, watermark]{zHenriquesLab-StyleBioRxiv}
+\usepackage{blindtext}
+\usepackage[htt]{hyphenat}
+% Please give the surname of the lead author for the running footer
+\leadauthor{BU} 
+
+\begin{document}
+
+\title{Interoperable}
+\shorttitle{Interoperable CIS}
+
+
+\author[1]{Mert Toslali}
+\author[1]{Jonathan Chamberlain}
+\author[1]{Felipe Dale Figeman}
+\author[1]{Zhengyang Tang}
+
+\affil[1]{BU EC528 - Cloud Computing}
+
+\maketitle
+
+%TC:break Abstract
+%the command above serves to have a word count for the abstract
+\begin{abstract}
+\input{abstract.tex}
+\end {abstract}
+%TC:break main
+%the command above serves to have a word count for the abstract
+
+
+
+\section*{Introduction}
+\input{intro.tex}
+
+\section*{Design}
+Interoperable framework will be a service which exists between developer and container runtimes. Our project aims to implement security checks across runtimes. The ultimate end goal will be to provide a means of lifecycle management of container runtimes in interoperable way. That is, a single script would be able to execute lifecyle commands independent of underlying container runtime.
+
+\subsection*{Implications and Discussion}
+
+The underlying structure of the configuration files per runtime will be evaluated, as this is what we use in making each of these checks.
+The interoperable framework will consist of scripts to be developed in Python.
+The scripts serve as wrappers for functionality so that the end-user can run commands without caring which container runtime is the target container is running on.
+Per the OCI standard, Docker, CRI-O, and containerd all use runc to implement low-level functionality. Thus, our intention is to leverage runc to create our interoperable framework. As seen in the above diagram, Docker implements its own image management and APIs for high level functionality on top of the container. Thus, understanding the interaction between the high level functionality and operations in runc is necessary in order to be able to implement the functionality in other frameworks.
+\input{cis.tex}
+
+
+\section*{Interoperable Application}
+
+Interoperable application is a Python executable, which accepts two parameters from user. That are, target container runtime and container-id. For instance, to issue CIS Chapter 5 benchmarks over Docker container with id = 0606, user is expected to run command as:
+\texttt{./interoperable\_app --docker 0606}.
+
+The minimum acceptance criteria for this course is to enable at least 5 benchmark checks on two different container runtimes. We target Docker and CRI-O as our primary focus. Our stretch goal criteria include ensuring the commands also work with containerd and be able to run the full suite of CIS Docker Benchmark checks from Chapters 5 (Container Runtime checks) and Chapter 4 (Container Images and Build File) on those runtimes. 
+
+In this section we demonstrate that we were able to perform more than 10 benchmarks over all container run-times (Docker, Containerd and Cri-o). 
+\input{docker.tex}
+\input{containerd.tex}
+\input{crio.tex}
+\input{frakti.tex}
+
+\section*{Bibliography}
+
+%% You can use these special %TC: tags to ignore certain parts of the text.
+%TC:ignore
+%the command above ignores this section for word count
+\onecolumn
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Supplementary Information %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\captionsetup*{format=largeformat}
+\section{Something about something} \label{note:Note1} 
+appendix
+
+%TC:endignore
+%the command above ignores this section for word count
+
+\end{document}

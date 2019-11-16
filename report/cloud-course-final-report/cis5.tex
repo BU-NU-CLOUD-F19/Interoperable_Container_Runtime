@@ -1,0 +1,65 @@
+\subsection*{CIS Chapter 5}
+The ways in which a container is started governs a lot of security implications. It is possible
+to provide potentially dangerous run-time parameters that might compromise the host and
+other containers on the host. Verifying container run-time is thus very important. In this project we implement various
+recommendations to assess the container run-time security that is provided through CIS Chapter 5.
+
+We implement following benchmarks: 
+
+ \subsubsection*{5.1 Do not disable AppArmor Profile (Scored)} 
+AppArmor protects the Linux OS and applications from various threats by enforcing
+security policy which is also known as AppArmor profile. You can create your own
+AppArmor profile for containers or use the Docker's default AppArmor profile. This would
+enforce security policies on the containers as defined in the profile.
+
+\subsubsection*{5.2 Verify SELinux security options, if applicable (Scored)} SELinux provides a Mandatory Access Control (MAC) system that greatly augments the
+default Discretionary Access Control (DAC) model. You can thus add an extra layer of safety
+by enabling SELinux on your Linux host, if applicable.
+
+\subsubsection*{5.3 Restrict Linux Kernel Capabilities within containers (Scored)} By default, Containers start with a restricted set of Linux Kernel Capabilities. It
+means that any process may be granted the required capabilities instead of root access.
+Using Linux Kernel Capabilities, the processes do not have to run as root for almost all the
+specific areas where root privileges are usually needed. 
+\begin{itemize}
+    \item NET\_ADMIN
+    \item SYS\_ADMIN
+    \item SYS\_MODULE
+\end{itemize}
+
+\subsubsection*{5.6 Do not run ssh within containers (Scored)}Running SSH within the container increases the complexity of security management by
+making it
+difficult to manage access policies and security compliance for SSH server. Difficult to manage keys and passwords across various containers. Difficult to manage security upgrades for SSH server
+It is possible to have shell access to a container without using SSH, the needlessly
+increasing the complexity of security management should be avoided.
+
+
+\subsubsection*{5.9 Do not share the host's network namespace (Scored)} This is potentially dangerous. It allows the container process to open low-numbered ports
+like any other root process. It also allows the container to access network services like Dbus on the Docker host. Thus, a container process can potentially do unexpected things
+such as shutting down the Docker host. You should not use this option.
+
+\subsubsection*{5.10 Limit memory usage for container (Scored)}
+By default, container can use all of the memory on the host. You can use memory limit
+mechanism to prevent a denial of service arising from one container consuming all of the
+host’s resources such that other containers on the same host cannot perform their intended
+functions. Having no limit on memory can lead to issues where one container can easily
+make the whole system unstable and as a result unusable.
+
+\subsubsection*{5.11 Set container CPU priority appropriately (Scored)}
+By default, CPU time is divided between containers equally. If it is desired, to control the
+CPU time amongst the container instances, you can use CPU sharing feature. CPU sharing
+allows to prioritize one container over the other and forbids the lower priority container to
+claim CPU resources more often. This ensures that the high priority containers are served
+better.
+
+\subsubsection*{5.24 Confirm cgroup usage (Scored)} System administrators typically define cgroups under which containers are supposed to
+run. 
+At run-time, it is possible to attach to a different cgroup other than the one that was
+expected to be used. This usage should be monitored and confirmed. By attaching to a
+different cgroup than the one that is expected, excess permissions and resources might be
+granted to the container and thus, can prove to be unsafe.
+
+\subsubsection*{5.28 Use PIDs cgroup limit (Scored)} Attackers could launch a fork bomb with a single command inside the container. This fork
+bomb can crash the entire system and requires a restart of the host to make the system
+functional again. PIDs cgroup --pids-limit will prevent this kind of attacks by restricting
+the number of forks that can happen inside a container at a given time.
+
