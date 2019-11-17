@@ -191,7 +191,7 @@ def getpid(runtime):
             data = json.load(json_file)
             p_id = data['pid'] if ('pid' in data) else False
             return p_id
-    if (runtime == 'docker'): #todo
+    if (runtime == 'docker'): #not needed as we can use the code for 5.1/5.2
         return False
     if (runtime == 'containerd'): #todo
         return False
@@ -249,6 +249,8 @@ def docker_utils():
         print(Fore.YELLOW)
         print(f"CIS 5.4:     Privileged: {data[priviliged_key]}")
 
+        
+
         if (portBindings_key in data):
         #print(f"CIS 5.7:     Check Privileged ports: {data[portBindings_key]}")
         #print(f"CIS 5.8:     Check ports: {data[portBindings_key]}")
@@ -294,6 +296,12 @@ def docker_utils():
         os.system(f'ps -eZ | grep {pid_container}')
         print(f"Pid: {pid_container}")
         pid_file.close()
+
+        #5.6
+        if (pid_container):
+            ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
+        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
+        
     
 
 
@@ -308,6 +316,12 @@ def containerd_utils():
         print(f"CIS 5.2 SELinux profile:")
         os.system(f'ps -eZ | grep {pid_container}')
         print(f"Pid: {pid_container}")
+        #5.6
+
+        if (pid_container):
+            ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
+        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
+        
 
 
 
