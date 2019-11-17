@@ -1,0 +1,16 @@
+# latex
+*.cut
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+bandit.pdf
+*.synctex.gz
+*.blg
+*.bbl
+
+# vscode
+.vscode
+
+.DS_Store

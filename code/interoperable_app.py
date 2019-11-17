@@ -198,23 +198,57 @@ def getpid(runtime):
 
 
 def docker_utils():
+    with open(pid_docker) as pid_file:
+        pid_container = pid_file.read()
+        app_armor = app_armor_global.format(pid_container)
+        with open(app_armor) as app_armor_file:
+            app_armor_profile = app_armor_file.read()
+            
+            print(Fore.YELLOW, f"CIS 5.1:    AppArmor: {app_armor_profile}")
+            if not app_armor_profile or app_armor_profile == "unconfined":
+                print(Fore.RED, "FAILED\n")
+            else:
+                print(Fore.GREEN, "PASSED\n")
+        
+       print(f"CIS 5.2 SELinux profile:")
+       os.system(f'ps -eZ | grep {pid_container}')
+       #print(f"Pid: {pid_container}")
+       if not pid_container or pid_container.startswith("unconfined"):
+           print(Fore.RED)
+           print("FAILED\n")
+       else:
+           print(Fore.GREEN)
+           print("PASSED\n")
+        pid_file.close()
+
+        print(Fore.YELLOW)
+        #5.6
+        if (pid_container):
+            ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
+        print(Vp6, print(Fore.RED), ' FAILED\n') if ssh_check else print(Vp6, Fore.GREEN,' PASSED\n')
+        
+    
     with open(config_path_docker) as json_file:
         data = json.load(json_file)
         process_attributes = data[process_key]
         appArmor = process_attributes[app_armor_profile_key] if (app_armor_profile_key in process_attributes) else ('NOT SET!')
-        print(Fore.YELLOW)
+        
         #print(f"CIS 5.1:     AppArmor: {process_attributes[app_armor_profile_key]}\n")
-        print(f"CIS 5.3:     Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}\n")
-        print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
-        print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
+        print(Fore.YELLOW, f"CIS 5.3:     Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}\n")
+        if "NET_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_MODULE" in process_attributes[capabilities_key][permitted_capabilities]:
+            print(Fore.RED, "FAILED\n")
+        else:
+            print(Fore.GREEN, "PASSED\n")
+       print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
+       print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
         
         #TODO: discuss long text
-        #print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
+       print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
         
         print(Style.RESET_ALL + "")
 
         cgrouppath = data[os_key][cgroups_key]
-
+        print(Fore.YELLOW)
         print(f"CIS 5.24:     Confirm cgroup usage: {cgrouppath}\n")
 
         memory_limit_docker_formatted = memory_limit_docker.format(cgrouppath)
@@ -288,21 +322,7 @@ def docker_utils():
 
 
 
-    with open(pid_docker) as pid_file:
-        pid_container = pid_file.read()
-        app_armor = app_armor_global.format(pid_container)
-        print(f"CIS 5.1:    AppArmor: {app_armor}")
-        print(f"CIS 5.2 SELinux profile:")
-        os.system(f'ps -eZ | grep {pid_container}')
-        print(f"Pid: {pid_container}")
-        pid_file.close()
 
-        #5.6
-        if (pid_container):
-            ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
-        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
-        
-    
 
 
 def containerd_utils():
@@ -312,15 +332,20 @@ def containerd_utils():
 
         app_armor = app_armor_global.format(pid_container)
         with open(app_armor) as app_armor_f:
-            print(f"CIS 5.1:    AppArmor: {app_armor_f.read()}")
-        print(f"CIS 5.2 SELinux profile:")
-        os.system(f'ps -eZ | grep {pid_container}')
-        print(f"Pid: {pid_container}")
+            app_armor_profile = app_armor_f.read()
+            print(Fore.YELLOW, f"CIS 5.1:    AppArmor: {app_armor_profile}")
+            if not app_armor_profile or app_armor_profile.startswith("unconfined"):
+                print(Fore.RED, "FAILED\n")
+            else:
+                print(Fore.GREEN, "PASSED\n")
+       print(f"CIS 5.2 SELinux profile:")
+       os.system(f'ps -eZ | grep {pid_container}')
+       print(f"Pid: {pid_container}")
         #5.6
 
         if (pid_container):
             ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
-        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
+        print(Fore.YELLOW, Vp6, Fore.RED, ' FAILED\n') if ssh_check else print(Fore.YELLOW, Vp6, Fore.GREEN, ' PASSED\n')
         
 
 
@@ -335,13 +360,17 @@ def containerd_utils():
 
         #print(f"CIS 5.1:    AppArmor: {appArmor}")
         print(f"CIS 5.3:    Permitted capabilities: {process_attributes[capabilities_key][permitted_capabilities]}")
-        print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
-        print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
-        print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
+        if "NET_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_MODULE" in process_attributes[capabilities_key][permitted_capabilities]:
+            print(Fore.RED, "FAILED\n")
+        else:
+            print(Fore.GREEN, "PASSED\n")
+       print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
+       print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
+       print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
 
 
         cgrouppath = data[os_key][cgroups_key]
-        print(f"CIS 5.24:    Check Cgroup path: {cgrouppath}")
+        print(Fore.YELLOW, f"CIS 5.24:    Check Cgroup path: {cgrouppath}\n")
 
         cpu_share = cpu_shares_containerd.format(cgrouppath)
         memory_limit = memory_limit_containerd.format(cgrouppath)
@@ -366,12 +395,12 @@ def containerd_utils():
     with open(state_path_containerd) as state_json:
         data = json.load(state_json)
 
-        print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
-        print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
-        print(f"CIS 5.15:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
-        print(f"CIS 5.15:    Do not share the host's uts namespace (Scored): {data[namespace_paths_key][NEWUTS_key]}")
+       print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+       print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
+       print(f"CIS 5.15:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
+       print(f"CIS 5.15:    Do not share the host's uts namespace (Scored): {data[namespace_paths_key][NEWUTS_key]}")
         
-        print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
+       print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
         
 
 
@@ -386,11 +415,16 @@ def crio_utils():
     app_armor = app_armor_global.format(container_pid)
 
     with open(app_armor) as app_armor_f:
-        print(f"CIS 5.1:    AppArmor: {app_armor_f.read()}")
+        app_armor_profile = app_armor_f.read()
+        print(Fore.YELLOW,f"CIS 5.1:    AppArmor: {app_armor_profile}")
+        if not app_armor_profile or app_armor_profile.startswith("unconfined"):
+            print(Fore.RED, "FAILED\n")
+        else:
+            print(Fore.GREEN, "PASSED\n")
 
-    print(f"CIS 5.2 SELinux profile:")
-    os.system(f'ps -eZ | grep {container_pid}')
-    print(f"Pid: {container_pid}")
+   print(f"CIS 5.2 SELinux profile:")
+   os.system(f'ps -eZ | grep {container_pid}')
+   print(f"Pid: {container_pid}")
 
 
     with open(config_path_crio) as json_file:
@@ -401,42 +435,46 @@ def crio_utils():
         #appArmor = process_attributes[app_armor_profile_key] if app_armor_profile_key in process_attributes else 'NOT SET!'
         #print(f"CIS 5.1: AppArmor: {appArmor}")
         #no 5.2 yet
-        print(f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
-        
-        #5.4
-        if (privileged_crio in (data[annotations_crio])): 
-            print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+        print(Fore.YELLOW, f"CIS 5.3: Permitted capabilities: {data[process_key][capabilities_key][permitted_capabilities]}")
+        if "NET_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_ADMIN" in process_attributes[capabilities_key][permitted_capabilities] or "SYS_MODULE" in process_attributes[capabilities_key][permitted_capabilities]:
+            print(Fore.RED, "FAILED\n")
         else:
-            print('CIS 5.4: Privileged runtime: Failed. Could not find: ', privileged_crio)
+            print(Fore.GREEN, "PASSED\n")
+
+        #5.4
+       if (privileged_crio in (data[annotations_crio])): 
+           print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+       else:
+           print('CIS 5.4: Privileged runtime: Failed. Could not find: ', privileged_crio)
         
         #5.5
-        if (mounts_key in data):
-            print(f"CIS 5.5: Mounts: {data[mounts_key]}")
-        else:
-            print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
+       if (mounts_key in data):
+           print(f"CIS 5.5: Mounts: {data[mounts_key]}")
+       else:
+           print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
 
         #5.6
 
         if (container_pid):
             ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh')
-        print(Vp6, ' Failed') if ssh_check else print(Vp6, ' Passed')
+        print(Fore.YELLOW, Vp6, Fore.RED, ' FAILED\n') if ssh_check else print(Fore.YELLOW, Vp6, Fore.GREEN, ' PASSED\n')
         
         #5.7 & 5.8
-        if (ports_crio in data[annotations_crio]):
-            print(Vp7, data[annotations_crio][ports_crio])
-            print(Vp8, data[annotations_crio][ports_crio])
-        else:
-            print(Vp7, 'Failed. Could not find ', ports_crio, sep=' ')
-            print(Vp8, 'Failed. Could not find ', ports_crio, sep=' ')
+       if (ports_crio in data[annotations_crio]):
+           print(Vp7, data[annotations_crio][ports_crio])
+           print(Vp8, data[annotations_crio][ports_crio])
+       else:
+           print(Vp7, 'Failed. Could not find ', ports_crio, sep=' ')
+           print(Vp8, 'Failed. Could not find ', ports_crio, sep=' ')
 
-        #5.9
-        if (host_network_crio in data[annotations_crio]):
-            print(Vp9, data[annotations_crio][host_network_crio], sep=' ')
-        else:
-            print(Vp9, host_network_crio, sep=' ')
+       # 5.9
+       if (host_network_crio in data[annotations_crio]):
+           print(Vp9, data[annotations_crio][host_network_crio], sep=' ')
+       else:
+           print(Vp9, host_network_crio, sep=' ')
         
         cgrouppath = data[os_key][cgroups_key]
-        print(f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
+        print(Fore.YELLOW, f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
 
         cpu_share = cpu_shares_crio.format(cgrouppath)
         memory_limit = memory_limit_crio.format(cgrouppath)
@@ -456,23 +494,23 @@ def crio_utils():
             cpu.close()
 
         #5.12
-        if (root_key in data):
-            if (readonlyroot_crio in data[root_key]):
-                print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
-            else:
-                print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
-        else:
-            print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
+       if (root_key in data):
+           if (readonlyroot_crio in data[root_key]):
+               print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
+           else:
+               print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
+       else:
+           print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
 
-        #5.13
-        if (ports_crio in data[annotations_crio]):
-            print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
-        else:
-            print('CIS 5.13: Check specific host-ip: Failed. Could not find', ports_crio, sep=' ') 
+#5.13
+       if (ports_crio in data[annotations_crio]):
+           print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
+       else:
+           print('CIS 5.13: Check specific host-ip: Failed. Could not find', ports_crio, sep=' ') 
 
-        print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
-        print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
-        #print(f"CIS 5.24: Confirm cgroup usage -parent: {data[os_key][cgroupsPath_key]}")
+       print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
+       print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
+        print(f"CIS 5.24: Confirm cgroup usage -parent: {data[os_key][cgroupsPath_key]}")
 
         
         
