@@ -16,9 +16,12 @@ image_hash_id_docker = "Image"
 # Configuration paths and attributes, CRI-O
 config_path_crio = "/var/lib/containers/storage/overlay-containers/{}/userdata/config.json"
 container_annotation_crio = "annotations"
+container_image_ref_crio = "io.kubernetes.cri-o.ImageRef"
 
 image_overlay_crio = "/var/lib/containers/storage/overlay-images/images.json"
-image_file_path_crio = "/var/lib/containers/storage/overlay-images/{}"
+image_overlay_digest = "digest"
+image_overlay_id = "id"
+image_file_path_crio = "/var/lib/containers/storage/overlay-images/{}/manifest"
 
 # Configuration paths and attributes, containerd
 
@@ -177,10 +180,13 @@ def docker_inspect_image():
 	return False
 
 def crio_inspect_image():
-	global config_path_crio 
+	global config_path_crio
+	global container_annotation_crio
+	global container_image_ref_crio
 	global image_overlay_crio
+	global image_overlay_digest
+	global image_overlay_id
 	global image_file_path_crio 
-	global image_hash_id_docker
 	global config_key
 	global user_key
 	global health_key
@@ -188,7 +194,40 @@ def crio_inspect_image():
 	global created_key
 
 	if sys.argv[1] and sys.argv[1] == "--crio" or sys.argv[1] == "--c":
-
+		config_path_crio = config_path_crio.format(sys.argv[2])
+		# open crio config file to get digest of associated image
+		with open(config_path_crio) as config_json:
+			config_data = json.load(config_json)
+			# configuration file stores digest reference, but this is not image id
+			image_digest = config_data[container_annotation_crio][container_image_ref_crio].split('@')[1]
+			# have digest hash, use this to indentify container id
+			with open(image_overlay_crio) as image_overlay_json:
+				images_overlay_data = json.load(image_overlay_json)
+				# images stored as an unlabeled list
+				num_images = len(images_overlay_data)
+				i = 0
+				image_id = None
+				while (i < num_images) and (image_id == None):
+					image = images_overlay_data[i]
+					if image[image_overlay_digest] == image_digest:
+						image_id = image[image_overlay_id]
+					i += 1
+				# have image id, can now open relevant file
+				image_file_path_crio = image_file_path_crio.format(image_id)
+				with open(image_file_path_crio) as image_json:
+					image_data = json.load(image_json)
+					# userid and healthcheck are sub attributes of config attribute
+					image_config = image_data[config_key]
+					userid = image_config[user_key] if image_config[user_key] is not '' else 'NOT SET!'
+					healthcheck = image_config[health_key] if health_key in image_config else 'NOT SET!'
+					# history in its own attribute
+					history = image_data[history_key]
+					# print result of each check
+					userid_check(userid)
+					#trusted_image_check(image_id)
+					#content_trust_check()
+					healthcheck_check(healthcheck)
+					history_check(history)			
 		return True
 	return False
 
