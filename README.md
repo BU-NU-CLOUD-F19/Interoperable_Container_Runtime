@@ -35,21 +35,21 @@ Example Use Case: A software developer would like to launch an image in CRI-O in
 
 The runtimes in scope for capatibility for this project will be Docker, and CRI-O. containerd is considered a runtime in scope as a stretch goal.
 
-This project aims to esnure that the framework implements commands that satisfy the CIS Docker 1.13.0 Benchmark related to Container Runtimes across our in-scope runtimes. In doing so, users will be enabled to run their security checks with a single script rather than requiring separate suites for each runtime. The MVP will be considered to be implementing select benchmarks in consultation with our mentor (highlighted in bold in the below list). Implementation of the full suite is a stretch goal.
+This project aims to esnure that the framework implements commands that satisfy the CIS Docker 1.13.0 Benchmark related to Container Runtimes across our in-scope runtimes. In doing so, users will be enabled to run their security checks with a single script rather than requiring separate suites for each runtime. The MVP will be considered to be implementing select benchmarks in consultation with our mentor. Benchmarks in Bold type indicate successful impelmentation. Implementation of the full suite is a stretch goal.
 
 These benchmarks are specified in pp 126-180 of the Benchmark documentation, and consists of the following checks:
 
 * **Do not disable AppArmor Profile** 
-* **Verify SELinux security options, if applicable** 
+* Verify SELinux security options, if applicable
 * **Restrict Linux Kernel Capabilities within containers** 
-* **Do not use privileged containers** 
-* **Do not mount sensitive host system directories on containers** 
-* Do not run ssh within containers 
+* Do not use privileged containers 
+* Do not mount sensitive host system directories on containers 
+* **Do not run ssh within containers** 
 * Do not map privileged ports within containers 
 * Open only needed ports on container 
 * Do not share the host's network namespace 
-* Limit memory usage for container 
-* Set container CPU priority appropriately 
+* **Limit memory usage for container** 
+* **Set container CPU priority appropriately** 
 * Mount container's root filesystem as read only 
 * Bind incoming container traffic to a specific host interface 
 * Set the 'on-failure' container restart policy to 5 
@@ -62,26 +62,26 @@ These benchmarks are specified in pp 126-180 of the Benchmark documentation, and
 * Do not disable default seccomp profile 
 * Do not docker exec commands with privileged option 
 * Do not docker exec commands with user option 
-* Confirm cgroup usage 
+* **Confirm cgroup usage** 
 * Restrict container from acquiring additional privileges 
 * Check container health at runtime 
 * Ensure docker commands always get the latest version of the image 
-* Use PIDs cgroup limit 
+* **Use PIDs cgroup limit** 
 * Do not use Docker's default bridge docker0 
 * Do not share the host's user namespaces 
 * Do not mount the Docker socket inside any containers 
 
-We have an additional stretch goal to implement checks on Container Images and Build Files from the same CIS Docker 1.13.0 Benchmark document. These checks are specified on pp 105-125 of the Doucmentation, and consist of the following:
+We have an additional stretch goal to implement checks on Container Images and Build Files from the same CIS Docker 1.13.0 Benchmark document. The checks will only be implemented in Docker in CRI-O at present due to the linkages between container and image file in containerd requiring additional investigation. These checks are specified on pp 105-125 of the Doucmentation, and consist of the following (Bold: full implementation; Italics: partial impelementation):
 
-* Create a user for the container  
-* Use trusted base images for containers 
+* **Create a user for the container**  
+* **Use trusted base images for containers** 
 * Do not install unnecessary packages in the container 
 * Scan and rebuild the images to include security patches 
-* Enable Content trust for Docker 
-* Add HEALTHCHECK instruction to the container image 
+* *Enable Content trust for Docker* 
+* *Add HEALTHCHECK instruction to the container image* 
 * Do not use update instructions alone in the Dockerfile 
 * Remove setuid and setgid permissions in the images
-* Use COPY instead of ADD in Dockerfile 
+* **Use COPY instead of ADD in Dockerfile** 
 * Do not store secrets in Dockerfiles 
 * Install verified packages only 
 
@@ -135,19 +135,24 @@ Release #3 (Completed):
 
 Release #4 (Completed): 
 
-* Implement and Demo check on Benchmark 5.10 Limit memory usage for container (Scored)
-* Implement and Demo check on Benchmark 5.11 Set container CPU priority appropriately (Scored)
-* Implement and Demo check on Benchmark 5.24 Confirm cgroup usage (Scored)
+* Implement and Demo check on Benchmark 5.10: Limit memory usage for container (Scored)
+* Implement and Demo check on Benchmark 5.11: Set container CPU priority appropriately (Scored)
+* Implement and Demo check on Benchmark 5.24: Confirm cgroup usage (Scored)
 * Begin evaluating documentation for Container Images and Build File checks
 
-Release #5 (due by Week 12): 
+Release #5 (Completed): 
 
-* Implement and demo at least one more Benchmark across all in-scope Runtimes 
+* Implement and demo check on Benchmark 5.6: Do not run ssh within containers
+* Implement and demo check on Benchmark 5.28: Use PIDs cgroup limit
+* Implement and demonstrate check on Benchmark 4.1: Create a user for the container
+* Implement and demonstrate check on Benchmark 4.2: Use trusted base images for containers
+* Implement and demonstrate check on Benchmark 4.9: Use COPY instead of ADD in Dockerfile
+
+
+Release #6 (due by Week 13): 
+
 * Finalize report and demo end-to-end
-
-Release #6 (due by Week 13) [Stretch goal]: 
-
-* Demo with remaining Benchmarks from Chapters 4 and 5, if time permits.
+* Demo with remaining Benchmarks from Chapters 4 and 5. [Stretch goal]
 
 
 ** **
