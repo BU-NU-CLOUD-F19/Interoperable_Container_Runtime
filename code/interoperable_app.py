@@ -108,6 +108,9 @@ namespace_paths_key = "namespace_paths"
 NEWPID_key = "NEWPID"
 NEWIPC_key = "NEWIPC"
 NEWUTS_key = "NEWUTS"
+NEWNET_key = "NEWNET"
+containerd_network_key = "networks"
+host_interface_name = "host_interface_name"
 
 
 #Benchmark strings
@@ -210,13 +213,13 @@ def docker_utils():
             else:
                 print(Fore.GREEN, "PASSED\n")
         
-       print(f"CIS 5.2 SELinux profile:")
-       os.system(f'ps -eZ | grep {pid_container}')
+        print(f"CIS 5.2 SELinux profile:")
+        os.system(f'ps -eZ | grep {pid_container}')
        #print(f"Pid: {pid_container}")
-       if not pid_container or pid_container.startswith("unconfined"):
+        if not pid_container or pid_container.startswith("unconfined"):
            print(Fore.RED)
            print("FAILED\n")
-       else:
+        else:
            print(Fore.GREEN)
            print("PASSED\n")
         pid_file.close()
@@ -239,11 +242,11 @@ def docker_utils():
             print(Fore.RED, "FAILED\n")
         else:
             print(Fore.GREEN, "PASSED\n")
-       print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
-       print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
+        print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
+        print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
         
         #TODO: discuss long text
-       print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
+        print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
         
         print(Style.RESET_ALL + "")
 
@@ -338,9 +341,9 @@ def containerd_utils():
                 print(Fore.RED, "FAILED\n")
             else:
                 print(Fore.GREEN, "PASSED\n")
-       print(f"CIS 5.2 SELinux profile:")
-       os.system(f'ps -eZ | grep {pid_container}')
-       print(f"Pid: {pid_container}")
+        print(f"CIS 5.2 SELinux profile:")
+        os.system(f'ps -eZ | grep {pid_container}')
+        print(f"Pid: {pid_container}")
         #5.6
 
         if (pid_container):
@@ -364,9 +367,9 @@ def containerd_utils():
             print(Fore.RED, "FAILED\n")
         else:
             print(Fore.GREEN, "PASSED\n")
-       print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
-       print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
-       print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
+        print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
+        print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
+        print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
 
 
         cgrouppath = data[os_key][cgroups_key]
@@ -395,12 +398,17 @@ def containerd_utils():
     with open(state_path_containerd) as state_json:
         data = json.load(state_json)
 
-       print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
-       print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
-       print(f"CIS 5.15:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
-       print(f"CIS 5.15:    Do not share the host's uts namespace (Scored): {data[namespace_paths_key][NEWUTS_key]}")
+        if (data[config_key][containerd_network_key][0][host_interface_name] == ""):
+           print(f"CIS 5.13: Check specific host-ip: not set",Fore.RED,"FAILED\n")
+        else:
+           print('CIS 5.13: Check specific host-ip:', data[config_key][containerd_network_key][0][host_interface_name],Fore.GREEN,"PASSED\n")
+        print(Fore.WHITE,f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+        print(f"CIS 5.9:    Do not share the host's network namespace (Scored): {data[namespace_paths_key][NEWNET_key]}")
+        print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
+        print(f"CIS 5.16:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
+        print(f"CIS 5.20:    Do not share the host's uts namespace (Scored): {data[namespace_paths_key][NEWUTS_key]}")
         
-       print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
+        print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
         
 
 
@@ -422,9 +430,9 @@ def crio_utils():
         else:
             print(Fore.GREEN, "PASSED\n")
 
-   print(f"CIS 5.2 SELinux profile:")
-   os.system(f'ps -eZ | grep {container_pid}')
-   print(f"Pid: {container_pid}")
+    print(f"CIS 5.2 SELinux profile:")
+    os.system(f'ps -eZ | grep {container_pid}')
+    print(f"Pid: {container_pid}")
 
 
     with open(config_path_crio) as json_file:
@@ -442,15 +450,15 @@ def crio_utils():
             print(Fore.GREEN, "PASSED\n")
 
         #5.4
-       if (privileged_crio in (data[annotations_crio])): 
+        if (privileged_crio in (data[annotations_crio])):
            print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
-       else:
+        else:
            print('CIS 5.4: Privileged runtime: Failed. Could not find: ', privileged_crio)
         
         #5.5
-       if (mounts_key in data):
+        if (mounts_key in data):
            print(f"CIS 5.5: Mounts: {data[mounts_key]}")
-       else:
+        else:
            print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
 
         #5.6
@@ -460,17 +468,17 @@ def crio_utils():
         print(Fore.YELLOW, Vp6, Fore.RED, ' FAILED\n') if ssh_check else print(Fore.YELLOW, Vp6, Fore.GREEN, ' PASSED\n')
         
         #5.7 & 5.8
-       if (ports_crio in data[annotations_crio]):
+        if (ports_crio in data[annotations_crio]):
            print(Vp7, data[annotations_crio][ports_crio])
            print(Vp8, data[annotations_crio][ports_crio])
-       else:
+        else:
            print(Vp7, 'Failed. Could not find ', ports_crio, sep=' ')
            print(Vp8, 'Failed. Could not find ', ports_crio, sep=' ')
 
        # 5.9
-       if (host_network_crio in data[annotations_crio]):
+        if (host_network_crio in data[annotations_crio]):
            print(Vp9, data[annotations_crio][host_network_crio], sep=' ')
-       else:
+        else:
            print(Vp9, host_network_crio, sep=' ')
         
         cgrouppath = data[os_key][cgroups_key]
@@ -494,22 +502,22 @@ def crio_utils():
             cpu.close()
 
         #5.12
-       if (root_key in data):
+        if (root_key in data):
            if (readonlyroot_crio in data[root_key]):
                print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
            else:
                print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
-       else:
+        else:
            print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
 
 #5.13
-       if (ports_crio in data[annotations_crio]):
+        if (ports_crio in data[annotations_crio]):
            print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
-       else:
+        else:
            print('CIS 5.13: Check specific host-ip: Failed. Could not find', ports_crio, sep=' ') 
 
-       print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
-       print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
+        print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
+        print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
         print(f"CIS 5.24: Confirm cgroup usage -parent: {data[os_key][cgroupsPath_key]}")
 
         
