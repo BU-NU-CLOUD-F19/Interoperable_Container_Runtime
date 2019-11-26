@@ -59,11 +59,35 @@ For the other benchmarks, interoperable application mainly leverages the fields 
 to implement \textbf{5.4, 5.7, 5.8, 5.9, 5.12, 5.13, 5.14, 5.15, 5.16, 5.17, 5.18, 5.20 and 5.25} on Docker, we use Hostconfig.json file for a given container. This file
 is created and stored per container in : \textit{/var/lib/docker/containers/} \textit{<container-id>/hostconfig.json}. To implement \textbf{5.3, 5.5, 5.21, 5.24} on docker, our application uses config.json under \textit{/run/containerd/io.containerd.runtime.v1.linux/moby/} \textit{<container-id>/config.json}.
 \\
+
 For crio, interoperable application implements \textbf{5.3, 5.4, 5.5, 5.7, 5.8, 5.9, 5.12, 5.13, 5.15, 5.16, 5.17, 5.20, 5.21, 5.24} using the config.json file per container. For crio this file is found from \textit{/var/lib/containers/storage/overlay-containers/}\textit{<container-id>/userdata/config.json}
 \\
 
-Containerd....
+For Containerd, interoperable application implements \textbf{5.3, 5.4, 5.5, 5.17, 5.24, 5.25} using the config.json file per container.
+For containerd, this file is found from \textit{/run/containerd/io.containerd.runtime.v2.task/default//} \textit{<container-id>/config.json}.
+Interoperable application implements \textbf{5.12, 5.15, 5.16, 5.20, 5.21} using the state.json file per container.
+For containerd, this file is found from \textit{/run/containerd/runc/default/}\textit{<container-id>/state.json}
+\section*{Appendix}
 
+\begin{figure*}
+    \caption{Docker.}
+    \centering
+      \includegraphics[width=\textwidth,height=10cm]{figures/docker}
+  \end{figure*}
+
+
+  \begin{figure*}
+    \caption{CRIO.}
+    \centering
+      \includegraphics[width=\textwidth,height=10cm]{figures/crio}
+  \end{figure*}
+
+
+  \begin{figure*}
+    \caption{Containerd}
+    \centering
+      \includegraphics[width=\textwidth,height=10cm]{figures/containerd}
+  \end{figure*}
 \section*{Bibliography}
 
 %% You can use these special %TC: tags to ignore certain parts of the text.
