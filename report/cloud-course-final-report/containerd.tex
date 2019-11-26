@@ -1,1 +1,21 @@
 \subsubsection*{Containerd}
+
+
+Other platform that we evaluate interoperable application is Containerd  run-time. The process for implementing given benchmarks are pretty similar to Docker that is
+mentioned above. Since different runtimes comes with different configuration files and corresponding structures, we state the implementation details as following.
+First, we find target container's pid from \textit{/run/containerd/io.containerd.runtime.v2.task/default/}
+\textit{<container-id>/init.pid}.
+In order to issue \textbf{5.1 Do not disable AppArmor Profile} and \textbf{5.2 Verify SELinux security options} benchmarks on Containerd, interoperable application
+uses procfs and corresponding pid for a container. Apparmor and SELinux are security attributes for a given process. 
+These values are stored under \textit{/proc/<pid>/attr/apparmor/current} and \textit{/proc/<pid>/attr/selinux/current} respectively. 
+By exposing these values, we are able to issue \textbf{5.1} and \textbf{5.2}.
+
+Per container instance, configuration file is on containerd created under \textit{/run/containerd/io.containerd.runtime.v2.task/default/} \textit{/<container-id>/config.json} file.
+From this file, we get \textbf{cgroup} path of a given container. Exposing this value also corresponds to \textbf{5.24} benchmark.
+
+Further, by using the cgroup path, we are able to access \textit{sysfs} and leverage attributes of a container. 
+ From this file, we are able to perform \textbf{5.10, 5.11, 5.28}. 
+ We specifically use followings:  \textbf{5.10 Memory Limit} of a container is found from: \textit{/sys/fs/cgroup/memory/<container-id>/memory.limit\_in\_bytes}.
+\textbf{5.11 CPU Share} of a container is found from: \textit{/sys/fs/cgroup/cpu/<container-id>/cpu.shares}.
+\textbf{5.28 PID Limits} of a container is found from: \textit{/sys/fs/cgroup/pids/<container-id>/pids.max}.
+ 

@@ -4,7 +4,7 @@ to provide potentially dangerous run-time parameters that might compromise the h
 other containers on the host. Verifying container run-time is thus very important. In this project we implement various
 recommendations to assess the container run-time security that is provided through CIS Chapter 5.
 
-We implement following benchmarks: 
+We mention following benchmarks for the sake of space. Other benchmarks that we implemented can be found from the appendix and their scopes/intentions can be evaluated from (https://www.cisecurity.org/benchmark/docker/): 
 
  \subsubsection*{5.1 Do not disable AppArmor Profile (Scored)} 
 AppArmor protects the Linux OS and applications from various threats by enforcing
@@ -33,9 +33,9 @@ It is possible to have shell access to a container without using SSH, the needle
 increasing the complexity of security management should be avoided.
 
 
-\subsubsection*{5.9 Do not share the host's network namespace (Scored)} This is potentially dangerous. It allows the container process to open low-numbered ports
-like any other root process. It also allows the container to access network services like Dbus on the Docker host. Thus, a container process can potentially do unexpected things
-such as shutting down the Docker host. You should not use this option.
+% \subsubsection*{5.9 Do not share the host's network namespace (Scored)} This is potentially dangerous. It allows the container process to open low-numbered ports
+% like any other root process. It also allows the container to access network services like Dbus on the Docker host. Thus, a container process can potentially do unexpected things
+% such as shutting down the Docker host. You should not use this option.
 
 \subsubsection*{5.10 Limit memory usage for container (Scored)}
 By default, container can use all of the memory on the host. You can use memory limit

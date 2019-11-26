@@ -33,14 +33,11 @@
 \input{intro.tex}
 
 \section*{Design}
-Interoperable framework will be a service which exists between developer and container runtimes. Our project aims to implement security checks across runtimes. The ultimate end goal will be to provide a means of lifecycle management of container runtimes in interoperable way. That is, a single script would be able to execute lifecyle commands independent of underlying container runtime.
+\input{design.tex}
 
 \subsection*{Implications and Discussion}
 
-The underlying structure of the configuration files per runtime will be evaluated, as this is what we use in making each of these checks.
-The interoperable framework will consist of scripts to be developed in Python.
-The scripts serve as wrappers for functionality so that the end-user can run commands without caring which container runtime is the target container is running on.
-Per the OCI standard, Docker, CRI-O, and containerd all use runc to implement low-level functionality. Thus, our intention is to leverage runc to create our interoperable framework. As seen in the above diagram, Docker implements its own image management and APIs for high level functionality on top of the container. Thus, understanding the interaction between the high level functionality and operations in runc is necessary in order to be able to implement the functionality in other frameworks.
+\input{implications.tex}
 \input{cis.tex}
 
 
@@ -49,13 +46,23 @@ Per the OCI standard, Docker, CRI-O, and containerd all use runc to implement lo
 Interoperable application is a Python executable, which accepts two parameters from user. That are, target container runtime and container-id. For instance, to issue CIS Chapter 5 benchmarks over Docker container with id = 0606, user is expected to run command as:
 \texttt{./interoperable\_app --docker 0606}.
 
-The minimum acceptance criteria for this course is to enable at least 5 benchmark checks on two different container runtimes. We target Docker and CRI-O as our primary focus. Our stretch goal criteria include ensuring the commands also work with containerd and be able to run the full suite of CIS Docker Benchmark checks from Chapters 5 (Container Runtime checks) and Chapter 4 (Container Images and Build File) on those runtimes. 
 
-In this section we demonstrate that we were able to perform more than 10 benchmarks over all container run-times (Docker, Containerd and Cri-o). 
+
+In this section we demonstrate that we are able to perform more than 10 benchmarks over all container run-times (Docker, Containerd and Cri-o). For the sake of space, we only
+mention about some of the benchmark implementation that were more challenging. For the other benchmarks, one can refer to tables that are located in appendix.
 \input{docker.tex}
 \input{containerd.tex}
 \input{crio.tex}
-\input{frakti.tex}
+
+\section*{Other benchmarks}
+For the other benchmarks, interoperable application mainly leverages the fields that exist within the corresponding configuration files per container. For example,
+to implement \textbf{5.4, 5.7, 5.8, 5.9, 5.12, 5.13, 5.14, 5.15, 5.16, 5.17, 5.18, 5.20 and 5.25} on Docker, we use Hostconfig.json file for a given container. This file
+is created and stored per container in : \textit{/var/lib/docker/containers/} \textit{<container-id>/hostconfig.json}. To implement \textbf{5.3, 5.5, 5.21, 5.24} on docker, our application uses config.json under \textit{/run/containerd/io.containerd.runtime.v1.linux/moby/} \textit{<container-id>/config.json}.
+\\
+For crio, interoperable application implements \textbf{5.3, 5.4, 5.5, 5.7, 5.8, 5.9, 5.12, 5.13, 5.15, 5.16, 5.17, 5.20, 5.21, 5.24} using the config.json file per container. For crio this file is found from \textit{/var/lib/containers/storage/overlay-containers/}\textit{<container-id>/userdata/config.json}
+\\
+
+Containerd....
 
 \section*{Bibliography}
 

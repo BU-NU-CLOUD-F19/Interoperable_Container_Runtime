@@ -1,0 +1,7 @@
+Interoperable application leverages the attributes that are exposed in \textit{sysfs} and \textit{procfs} per process in Linux. The sysfs filesystem is a pseudo-filesystem which provides an
+interface to kernel data structures. The files under sysfs provide
+information about devices, kernel modules, filesystems, and other
+kernel components. The proc filesystem is a pseudo-filesystem which provides an
+interface to kernel data structures. Interoperable application use procfs and sysfs per container instance to figure out neccesary attributes which are dictated by CIS Benchmarks. The detailed implementation is discussed in later sections. 
+Furthermore, along with the procfs and sysfs, Interoperable application also evaluates the underlying structure of the configuration files per container runtime in order to implement CIS checks.
+
