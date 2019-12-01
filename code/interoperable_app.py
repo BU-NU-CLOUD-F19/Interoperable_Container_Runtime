@@ -212,7 +212,7 @@ def docker_utils():
                 print(Fore.RED, "FAILED\n")
             else:
                 print(Fore.GREEN, "PASSED\n")
-        
+        print(Fore.YELLOW)
         print(f"CIS 5.2 SELinux profile:")
         os.system(f'ps -eZ | grep {pid_container}')
        #print(f"Pid: {pid_container}")
@@ -228,6 +228,7 @@ def docker_utils():
         #5.6
         if (pid_container):
             ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
+        print()
         print(Vp6, print(Fore.RED), ' FAILED\n') if ssh_check else print(Vp6, Fore.GREEN,' PASSED\n')
         
     
@@ -242,11 +243,12 @@ def docker_utils():
             print(Fore.RED, "FAILED\n")
         else:
             print(Fore.GREEN, "PASSED\n")
+        print(Fore.YELLOW)
         print(f"CIS 5.5:     Do not mount sensitive host system directories on containers: {data[mounts_key]}\n")
         print(f"CIS 5.17:     Host Devices: {data[os_key][resources_key][devices_key]}\n")
         
         #TODO: discuss long text
-        print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
+        #print(f"CIS 5.21:     Seccomp Profile: {data[os_key][seccomp_key]}\n")
         
         print(Style.RESET_ALL + "")
 
@@ -284,40 +286,72 @@ def docker_utils():
     with open(hostconfig_path_docker) as json_file:
         data = json.load(json_file)
         print(Fore.YELLOW)
-        print(f"CIS 5.4:     Privileged: {data[priviliged_key]}")
-
+        print(f"CIS 5.4:     Do not use privileged containers : {data[priviliged_key]}")
+        if not data[priviliged_key] or data[priviliged_key].startswith("True"):
+           print(Fore.RED)
+           print("FAILED\n")
+        else:
+           print(Fore.GREEN)
+           print("PASSED\n")
+        print(Fore.YELLOW)
         
 
-        if (portBindings_key in data):
-        #print(f"CIS 5.7:     Check Privileged ports: {data[portBindings_key]}")
-        #print(f"CIS 5.8:     Check ports: {data[portBindings_key]}")
-            print(Vp7, data[portBindings_key], sep=' ')
-            print(Vp8, data[portBindings_key], sep=' ')
-        else:
-            print(Vp7, 'Failed ', cnf, portBindings_key, sep=' ')
-            print(Vp8, 'Failed '. cnf, portBindings_key, sep=' ')
-    
+      
+        print(Vp7, data[portBindings_key], sep=' ')
+      
+
+        print(Vp8, data[portBindings_key], sep=' ')
+        
         #print(f"CIS 5.9:     NetworkMode: {data[NetworkMode_key]}")        
-        if (NetworkMode_key in data):
-            print(Vp9, data[NetworkMode_key])
+        
+        print(Vp9, data[NetworkMode_key])
+        if data[NetworkMode_key] and data[NetworkMode_key].startswith("host"):
+            print(Fore.RED,"FAILED")
         else:
-            print(Vp9, cnf, NetworkMode_key)
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW)
 
 
         print(f"CIS 5.12:     ReadonlyRootfs: {data[ReadonlyRootfs_key]}")
+        if data[ReadonlyRootfs_key] and data[ReadonlyRootfs_key].startswith("False"):
+            print(Fore.RED,"FAILED")
+        else:
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW)  
+
         print(f"CIS 5.13:     Check specific host-ip: {data[portBindings_key]}")
         #For things like this where it keeps reusing some data in non-continuous benchmarks maybe we should have a 
         #list of strings in order for the benchmarks but fill them out in the order the data is accessed, Just for readability and such
         #What do you guys think? Like i could stash this in the part7/8 bit
         print(f"CIS 5.14:     Set the 'on-failure' container restart policy to 5 (Scored): {data[RestartPolicy_key]}")
-        print(f"CIS 5.15:     Do not share the host's process namespace (Scored): {data[PidMode_key]}")
+        print(f"CIS 5.15:     Do not share the host's process namespace (Scored): {data.get(PidMode_key,' Host is not shared')}")
+        if data[PidMode_key] and data[PidMode_key].startswith("host"):
+            print(Fore.RED,"FAILED")
+        else:
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW) 
         print(f"CIS 5.16:     Do not share the host's IPC namespace (Scored): {data[IpcMode_key]}")
+        if data[IpcMode_key] and data[IpcMode_key].startswith("host") or data[IpcMode_key].startswith("shareable"):
+            print(Fore.RED,"FAILED")
+        else:
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW) 
         print(f"CIS 5.17:     Do not directly expose host devices to containers (Not Scored): {data[Devices_key]}")
         print(f"CIS 5.18:     Override default ulimit at runtime only if needed (Not Scored): {data[Ulimits_key]}")
-        print(f"CIS 5.20:     Do not share the host's UTS namespace (Scored): {data[UTSMode_key]}")
+        print(f"CIS 5.20:     Do not share the host's UTS namespace (Scored): {data.get(UTSMode_key,' not shared!')}")
+        if data[UTSMode_key] and data[UTSMode_key].startswith("host") or data[UTSMode_key].startswith("shareable"):
+            print(Fore.RED,"FAILED")
+        else:
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW) 
+
         print(f"CIS 5.25:     Restrict container from acquiring additional privileges (Scored): {data[SecurityOpt_key]}")
         
-        
+        if not data[SecurityOpt_key] or "no-new-privileges" not in data[SecurityOpt_key]:
+            print(Fore.RED,"FAILED")
+        else:
+            print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW) 
         #print(f"CIS 5.24:     Confirm cgroup usage -parent: {data[cgroups_parent_key]}\n")
         print(Style.RESET_ALL + "")
         json_file.close()
@@ -341,11 +375,18 @@ def containerd_utils():
                 print(Fore.RED, "FAILED\n")
             else:
                 print(Fore.GREEN, "PASSED\n")
-        print(f"CIS 5.2 SELinux profile:")
-        os.system(f'ps -eZ | grep {pid_container}')
-        print(f"Pid: {pid_container}")
-        #5.6
 
+        print(Fore.YELLOW,f"CIS 5.2 SELinux profile:")
+        res = os.system(f'ps -eZ | grep {pid_container}')
+        if not res or res.startswith("unconfined"):
+           print(Fore.RED)
+           print("FAILED\n")
+        else:
+           print(Fore.GREEN)
+           print("PASSED\n")
+        #print(f"Pid: {pid_container}")
+        #5.6
+        print(Fore.YELLOW)
         if (pid_container):
             ssh_check = cat_n_grep(('/proc/' + str(pid_container) + '/cmdline'), 'ssh')
         print(Fore.YELLOW, Vp6, Fore.RED, ' FAILED\n') if ssh_check else print(Fore.YELLOW, Vp6, Fore.GREEN, ' PASSED\n')
@@ -367,7 +408,16 @@ def containerd_utils():
             print(Fore.RED, "FAILED\n")
         else:
             print(Fore.GREEN, "PASSED\n")
+
+        print(Fore.YELLOW)
         print(f"CIS 5.4:    Privileged runtime: {process_attributes[noNewPrivileges]}")
+        if process_attributes[noNewPrivileges]:
+           print(Fore.RED)
+           print("FAILED\n")
+        else:
+           print(Fore.GREEN)
+           print("PASSED\n")
+        print(Fore.YELLOW)
         print(f"CIS 5.5:    Mounts: {data[mounts_key]}")
         print(f"CIS 5.17:    Host Devices: {data[os_key][resources_key][devices_key]}")
 
@@ -394,7 +444,7 @@ def containerd_utils():
             print(f"CIS 5.28:     Use PIDs cgroup limit: {pids_limit}")
             pid.close()
 
-        print(Style.RESET_ALL + "")
+        print(Fore.YELLOW)
     with open(state_path_containerd) as state_json:
         data = json.load(state_json)
 
@@ -402,7 +452,14 @@ def containerd_utils():
            print(f"CIS 5.13: Check specific host-ip: not set",Fore.RED,"FAILED\n")
         else:
            print('CIS 5.13: Check specific host-ip:', data[config_key][containerd_network_key][0][host_interface_name],Fore.GREEN,"PASSED\n")
-        print(Fore.WHITE,f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+        
+        print(Fore.YELLOW)
+        print(f"CIS 5.12:    ReadonlyRootfs: {data[config_key][readonlyfs_key]}")
+        if not data[config_key][readonlyfs_key]:
+        	print(Fore.RED,"FAILED")
+        else:
+        	print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW)
         print(f"CIS 5.9:    Do not share the host's network namespace (Scored): {data[namespace_paths_key][NEWNET_key]}")
         print(f"CIS 5.15:    Do not share the host's process namespace (Scored): {data[namespace_paths_key][NEWPID_key]}")
         print(f"CIS 5.16:    Do not share the host's ipc namespace (Scored): {data[namespace_paths_key][NEWIPC_key]}")
@@ -410,7 +467,7 @@ def containerd_utils():
         
         print(f"CIS 5.21:    SEccomp profile: {data[config_key][seccomp_key]}")
         
-
+        print(Style.RESET_ALL)
 
 
 
@@ -429,7 +486,7 @@ def crio_utils():
             print(Fore.RED, "FAILED\n")
         else:
             print(Fore.GREEN, "PASSED\n")
-
+    print(Fore.YELLOW)
     print(f"CIS 5.2 SELinux profile:")
     os.system(f'ps -eZ | grep {container_pid}')
     print(f"Pid: {container_pid}")
@@ -449,12 +506,15 @@ def crio_utils():
         else:
             print(Fore.GREEN, "PASSED\n")
 
+        print(Fore.YELLOW)
         #5.4
         if (privileged_crio in (data[annotations_crio])):
            print(f"CIS 5.4: Privileged runtime: {data[annotations_crio][privileged_crio]}")
+           print(Fore.GREEN,"PASSED")
         else:
            print('CIS 5.4: Privileged runtime: Failed. Could not find: ', privileged_crio)
-        
+           print(Fore.RED,"FAILED")
+        print(Fore.YELLOW)
         #5.5
         if (mounts_key in data):
            print(f"CIS 5.5: Mounts: {data[mounts_key]}")
@@ -462,11 +522,12 @@ def crio_utils():
            print('CIS 5.5: Mounts: Failed. ' + mounts_key + 'not found') 
 
         #5.6
-
+        print(Fore.YELLOW)
         if (container_pid):
             ssh_check = cat_n_grep(('/proc/' + str(container_pid) + '/cmdline'), 'ssh')
         print(Fore.YELLOW, Vp6, Fore.RED, ' FAILED\n') if ssh_check else print(Fore.YELLOW, Vp6, Fore.GREEN, ' PASSED\n')
         
+        print(Fore.YELLOW)
         #5.7 & 5.8
         if (ports_crio in data[annotations_crio]):
            print(Vp7, data[annotations_crio][ports_crio])
@@ -476,10 +537,14 @@ def crio_utils():
            print(Vp8, 'Failed. Could not find ', ports_crio, sep=' ')
 
        # 5.9
-        if (host_network_crio in data[annotations_crio]):
-           print(Vp9, data[annotations_crio][host_network_crio], sep=' ')
+        
+		
+        print(f"CIS 5.9: Do not share the host's network namespace: {data[annotations_crio][host_network_crio]}")
+        if data[annotations_crio][host_network_crio]:
+        	print(Fore.RED,"FAILED")
         else:
-           print(Vp9, host_network_crio, sep=' ')
+        	print(Fore.GREEN, "PASSED")
+        print(Fore.YELLOW)
         
         cgrouppath = data[os_key][cgroups_key]
         print(Fore.YELLOW, f"CIS 5.24: Confirm cgroup usage: {cgrouppath}")
@@ -503,18 +568,22 @@ def crio_utils():
 
         #5.12
         if (root_key in data):
-           if (readonlyroot_crio in data[root_key]):
+            if data[root_key][readonlyroot_crio]: 
                print(f"CIS 5.12: Read-only rootfs: {data[root_key][readonlyroot_crio]}")
-           else:
-               print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
+               print(Fore.GREEN,"PASSED")
+            else:
+               #print('CIS 5.12: Read only rootfs: Failed. Could not find', readonlyroot_crio, sep=' ')
+               print(Fore.RED,"FAILED")
         else:
-           print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
+            print('CIS 5.12: Read only rootfs: Failed. Could not find', root_key, sep=' ')
 
+        print(Fore.YELLOW)
 #5.13
         if (ports_crio in data[annotations_crio]):
            print(f"CIS 5.13: Check specific host-ip: {data[annotations_crio][ports_crio]}")
         else:
            print('CIS 5.13: Check specific host-ip: Failed. Could not find', ports_crio, sep=' ') 
+
 
         print(f"CIS 5.17: Host devices: {data[os_key][resources_key][devices_key]}")
         print(f"CIS 5.21: Check Seccomp profile: {data[annotations_crio][seccomp_crio]}")
