@@ -18,7 +18,7 @@ Fp9 = "CIS 4.9: Use COPY instead of ADD in Dockerfile: "
 def userid_check(userid):
 	# Perform check 4.1, create a user
 	if userid == 'NOT SET!' or userid == 0:
-		print(f"{Fp1} " + Fore.RED + f"FAILURE, USER ID {userid}")
+		print(f"{Fp1} " + Fore.RED + f"FAILURE, USER IS ROOT")
 	else:
 		print(f"{Fp1} " + Fore.GREEN + f"PASS, USER ID = {userid}")
 	print(Style.RESET_ALL + '')
@@ -73,10 +73,18 @@ def content_trust_check():
 
 def healthcheck_check(healthcheck):
 	# Perform check 4.6, add HELATHCHECK instruction
+	followup = False
 	if healthcheck == 'NOT SET!':
 		print(f"{Fp6} " + Fore.RED + f"FAILURE, HEALTHCHECK INSTRUCTIONS {healthcheck}")
-	else:
-		print(f"{Fp6} " + Style.GREEN + f"PASS, HEALTHCHECK INSTRUCTIONS {healthcheck}")
+	'''
+	Add check for curl/iwr, which are not necessarily recommended due to dependencies not necessarily
+	existing in the image
+		'''
+	elif 'curl' in healthcheck or 'iwr' in healthcheck:
+		print(f"{Fp6} " + Style.YELLOW + f"PARTIAL PASS, HEALTHCHECK INSTRUCTION PRESENT: {healthcheck}")
+		print(f"USE OF CURL/IWR REQUIRE DEPENDENCIES IN IMAGE, VALIDATE PROPER INSTRUCTIONS WITH SYSADMIN")
+	else: 
+		print(f"{Fp6} " + Style.GREEN + f"PASS, HEALTHCHECK INSTRUCTION PRESENT: {healthcheck}")
 	print(Style.RESET_ALL + '')
 
 def history_check_docker(history):
@@ -111,20 +119,18 @@ def history_check_crio(history):
 	history_compatible_key = "v1Compatibility"
 	created_key = "created" # timestamp of instruction
 	config_key = "container_config" # contains instruciton in sub attribute
-	command_key = "cmd" # contains the instructions
+	command_key = "Cmd" # contains the instructions
 	add_times = [] # list to hold timestamps of add instructions
-	i = 0
+
 	for line in history:
-		if i > 0:
-			print(line[history_compatible_key][config_key])
-		'''
-		if 'ADD' in line[history_compatible_key][config_key][command_key]:
-			add_times.append(line[created_key])
+		# json dict is itself a string stored in the v1Compatibility attribute, extract
+		v1Compatibility = json.loads(line[history_compatible_key])
+		if 'ADD' in v1Compatibility[config_key][command_key]:
+			add_times.append(v1Compatibility[created_key])
 			failure = True
-		elif 'COPY' in line[created_key]:
+		elif 'COPY' in v1Compatibility[config_key][command_key]:
 			success = True
-		'''
-		i += 1
+
 	if failure:
 		print(Fore.RED + f'FAILURE, ADD INSTRUCTIONS FOUND IN HISTORY AT:')
 		for t in add_times: print(t)
@@ -234,13 +240,8 @@ def crio_inspect_image():
 					image_data = json.load(image_json)
 					# history in its own attribute
 					history = image_data[history_key]
-					# history_check_crio(history)
-					# healthcheck attribute ???? of config attribute
-					#healthcheck = image_config[health_key] if health_key in image_config else 'NOT SET!'
-					# print result of each check
-					#content_trust_check()
-					#healthcheck_check(healthcheck)
-							
+					history_check_crio(history)
+					# healthcheck possibly not component of CRI-O image?			
 		return True
 	return False
 
