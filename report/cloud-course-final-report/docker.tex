@@ -1,12 +1,13 @@
 \subsubsection*{Docker}
-Our primary platform is Docker container run-time. Here, we evaluate the how we implement the CIS checks on Docker. 
-First, we find target container's pid from \textit{/run/containerd/io.containerd.runtime.v1.linux/moby/}
+
+Our primary focus in initial development was ensuring the benchmarks could be validated in the the Docker container run-time, as the CIS Benchmarks are defined for Docker. In this subsection, we detail the technical details of how we validate the benchmarks highlighted in the Container Runtime Benchmarks section. First, we find the pid associated with the target container by inspecting \textit{/run/containerd/io.containerd.runtime.v1.linux/moby/}
 \textit{<container-id>/init.pid}.
-In order to issue \textbf{5.1 Do not disable AppArmor Profile} and \textbf{5.2 Verify SELinux security options} benchmarks over Docker, we use procfs and pid. Apparmor and SELinux are security attributes for a given process. So these values are stored under \textit{/proc/<pid>/attr/apparmor/current} and \textit{/proc/<pid>/attr/selinux/current} respectively. By exposing these values, we are able to issue \textbf{5.1} and \textbf{5.2}.
 
-Per container instance, configuration file is created under \textit{/run/containerd/io.containerd.runtime.v1.linux/moby} \textit{/<container-id>/config.json} file. From this file, we get \textbf{cgroup} path of a given container. Exposing this value also corresponds to \textbf{5.24} benchmark.
+With the pid, we are able to evaluate Benchmarks \textbf{5.1 Do not disable AppArmor Profile} and \textbf{5.2 Verify SELinux security options}. Apparmor and SELinux are security attributes for a given process, and can be verified within procfs. In particular, these values are stored under \textit{/proc/<pid>/attr/apparmor/current} and \textit{/proc/<pid>/attr/selinux/current} respectively. Exposing these values enables verification of \textbf{5.1} and \textbf{5.2}.
 
-Further, by using the cgroup path, we are able to access \textit{sysfs} of a given container. \textit{sysfs} is a pseudo file system provided by the Linux kernel that exports information about various kernel subsystems. From this file, we are able to perform \textbf{5.10, 5.11, 5.28}. \textbf{5.10 Memory Limit} of a container is found from: \textit{/sys/fs/cgroup/memory/<container-id>/memory.limit\_in\_bytes}.
+In order to validate the cgroup assigned to the container, we need to inspect the container's configuration json file. For a particular instance, the configuration file is located at the path \textit{/run/containerd/io.containerd.runtime.v1.linux/moby} \textit{/<container-id>/config.json}. The cgroup path is contained as an attribute within this file. Exposing this value enables verification of the \textbf{5.24} benchmark directly, as well as enables further additional checks.
+
+With the cgroup path known, we are able to access \textit{sysfs} of a given container in order to validate Benchmarks \textbf{5.10, 5.11, 5.28}. \textbf{5.10 Memory Limit} of a container is found from: \textit{/sys/fs/cgroup/memory/<container-id>/memory.limit\_in\_bytes}.
 \textbf{5.11 CPU Share} of a container is found from: \textit{/sys/fs/cgroup/cpu/<container-id>/cpu.shares}.
 \textbf{5.28 PID Limits} of a container is found from: \textit{/sys/fs/cgroup/pids/<container-id>/pids.max}.
  
