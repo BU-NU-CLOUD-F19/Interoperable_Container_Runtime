@@ -76,39 +76,41 @@ The ultimate goal is to develop an interoperable container runtime tool that all
 
 The intended user is the Chief Information Security Officer or their designee of a medium- or large-scale cloud organization, who is tasked with ensuring that containers running their clusters meet requirements for secure containers. 
 
+This in particular represents a change from our origional proposal due to a shift to primarily considering the security aspects of containers - further information is detailed in the final report PDF.
+
 ## 3.   Scope and Features Of The Project:
 
 The runtimes in scope for capatibility for this project will be Docker, and CRI-O. containerd is considered a runtime in scope as a stretch goal.
 
-This project aims to esnure that the framework implements commands that satisfy the CIS Docker 1.13.0 Benchmark related to Container Runtimes across our in-scope runtimes. In doing so, users will be enabled to run their security checks with a single script rather than requiring separate suites for each runtime. The MVP will be considered to be implementing select benchmarks in consultation with our mentor. Benchmarks in Bold type indicate successful impelmentation. Implementation of the full suite is a stretch goal.
+This project aims to esnure that the framework implements commands that satisfy the CIS Docker 1.13.0 Benchmark related to Container Runtimes across our in-scope runtimes. In doing so, users will be enabled to run their security checks with a single script rather than requiring separate suites for each runtime. The MVP will be considered to be implementing select benchmarks in consultation with our mentor. Benchmarks in Bold type indicate successful impelmentation in all runtimes. Italics indicate a benchmark implemented in some but not all runtimes. We were able to implement the majority of the benchmarks related to the container runtimes, but did not meet our stretch goal of implementing the full suite.
 
 These benchmarks are specified in pp 126-180 of the Benchmark documentation, and consists of the following checks:
 
 * **Do not disable AppArmor Profile** 
-* Verify SELinux security options, if applicable
+* **Verify SELinux security options, if applicable**
 * **Restrict Linux Kernel Capabilities within containers** 
-* Do not use privileged containers 
-* Do not mount sensitive host system directories on containers 
+* **Do not use privileged containers** 
+* **Do not mount sensitive host system directories on containers** 
 * **Do not run ssh within containers** 
-* Do not map privileged ports within containers 
-* Open only needed ports on container 
-* Do not share the host's network namespace 
+* *Do not map privileged ports within containers* 
+* *Open only needed ports on container* 
+* *Do not share the host's network namespace* 
 * **Limit memory usage for container** 
 * **Set container CPU priority appropriately** 
-* Mount container's root filesystem as read only 
-* Bind incoming container traffic to a specific host interface 
-* Set the 'on-failure' container restart policy to 5 
-* Do not share the host's process namespace 
-* Do not share the host's IPC namespace 
-* Do not directly expose host devices to containers 
-* Override default ulimit at runtime only if needed 
+* **Mount container's root filesystem as read only** 
+* *Bind incoming container traffic to a specific host interface* 
+* *Set the 'on-failure' container restart policy to 5* 
+* **Do not share the host's process namespace** 
+* **Do not share the host's IPC namespace** 
+* *Do not directly expose host devices to containers* 
+* *Override default ulimit at runtime only if needed* 
 * Do not set mount propagation mode to shared 
-* Do not share the host's UTS namespace 
-* Do not disable default seccomp profile 
+* **Do not share the host's UTS namespace** 
+* **Do not disable default seccomp profile** 
 * Do not docker exec commands with privileged option 
 * Do not docker exec commands with user option 
 * **Confirm cgroup usage** 
-* Restrict container from acquiring additional privileges 
+* *Restrict container from acquiring additional privileges* 
 * Check container health at runtime 
 * Ensure docker commands always get the latest version of the image 
 * **Use PIDs cgroup limit** 
@@ -197,13 +199,17 @@ Release #5 (Completed):
 Release #6 (due by Week 13): 
 
 * Finalize report and demo end-to-end
-* Demo with remaining Benchmarks from Chapters 4 and 5. [Stretch goal]
+* Demo with remaining Benchmarks from Chapters 4 and 5. [Stretch goal] - Failed to implemenent full suite, see report for further details.
 
 
 ** **
 ## 7. Concerns
 
-The main questions and concerns we have at this point are regarding understanding how the various runtimes operate. The differences in implementations were not necessarily clear. In particular, understanding how CRI-O works, and why it was developed proved to be a difficulty in our inital analysis of the container runtime functionality. 
+The main questions and concerns we had when inititally starting the project was regarding understanding how the various runtimes operate. The differences in implementations were not necessarily clear. In particular, understanding how CRI-O works, and why it was developed proved to be a difficulty in our inital analysis of the container runtime functionality. 
+
+As of the end of the semester, the primary concerns are in defining how to establish a best practice for what the various container settings "should" be set to. This stems primarily from a lack of centralized recommendation as containers by nature are flexible, and recommended limits for one particular application and/or organization.
+
+In addition, one late roadblock emerged from a follow up discussion where it was clarified what the intended user/use case should be for the application as developed. This in turn necessetates determining how to stand up the application as a service running on a Kubernetes cluster. Doing so unforutnately will need to be implemented as part of future work.
 
 ** **
 
