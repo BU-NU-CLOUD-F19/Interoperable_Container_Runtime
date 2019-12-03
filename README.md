@@ -1,5 +1,52 @@
 # Interoperable_Container_Runtime
 ** **
+## Presentations
+
+Final Report: [Video](), [PDF]()
+
+Demo-1. [Slides](https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260)
+
+Demo-2. [Slides](https://docs.google.com/presentation/d/13oyb9Et6FaSwatqjOO1UZ1DuA2F75J4_1z9GpLquNSw/edit#slide=id.g61835f440d_2_260)
+
+Demo-3. [Slides](https://docs.google.com/presentation/d/11xGzlamKRxR4OkDQJ18vTwfvxp4XdIXRqlegtRix78o/edit?usp=sharing)
+
+Demo-4. [Slides](https://docs.google.com/presentation/d/1SLH9yXW7gE4jdjYU8HPlak5v57JpW7kvapLHjoONeQU/edit#slide=id.g73cf6cf64a_0_9)
+
+Demo-5. [Slides](https://docs.google.com/presentation/d/1tij8mnxX2RUFK7nxExzcri_sR3nQiFUgGrjuB862RYM/edit?usp=sharing)
+
+Kafka Paper Presetation [Slides](https://docs.google.com/presentation/d/1s-PE9H6SfO_vgoV0IfJc345ZzA3LWJY5YoIdYANDnd0/edit?ts=5db0948e#slide=id.p)
+
+## Installation and Usage Instructions
+
+Currently, the interoperable_app, interoperable_image_app, and image_approval_manager exist as separate scripts written in Python3. To install, simply copy the python code to the server the containers are running on. In addition, files image_approvedlist.txt and image_blocklist.txt must be added in the same location. These files are used to denote image IDs that are known to be trusted images (image_approvedlist), and images which have been evaluated and lack approval (image_blocklist).
+
+The modules sys, os, json, pyfiglet, colorama must all be present for the applications to run properly.
+
+To run checks on the containers, invoke the interoperable_app from the commandline as follows:
+python3 interoperable_app <container type> <container ID>
+ 
+Where container types are:
+Docker: --docker or --d
+cir-o: --crio or --c
+containerd: --containerd or --ctr
+
+To run checks on the image file a container is running, invoke the interoperable_image_app from the commandline as follows:
+python3 interoperable_image_app <container type> <container ID>
+
+Where container types are: 
+Docker: --docker or --d
+cir-o: --crio or --c
+
+interoperable_image_app can be called containerd for forward compatibility purposes, however at present this merely displays a message that containerd is not supported.
+
+image_approval_manager writes image ids to approved and block lists which are checked against when the interoperable_image_app is called; part of the check is against whether the image is approved. To add an image id to a list, invoke from the commandline as follows:
+python3 image_approval_manager <action> <image ID>
+ 
+Where action is:
+Add to approved list: -a
+Add to block list: -b
+
+** **
 
 ## Abstract
 
@@ -181,17 +228,5 @@ The main questions and concerns we have at this point are regarding understandin
 
 
 ** **
-## Presentations
 
-Demo-1. https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260
-
-Demo-2. https://docs.google.com/presentation/d/13oyb9Et6FaSwatqjOO1UZ1DuA2F75J4_1z9GpLquNSw/edit#slide=id.g61835f440d_2_260
-
-Demo-3. https://docs.google.com/presentation/d/11xGzlamKRxR4OkDQJ18vTwfvxp4XdIXRqlegtRix78o/edit?usp=sharing
-
-Demo-4. https://docs.google.com/presentation/d/1SLH9yXW7gE4jdjYU8HPlak5v57JpW7kvapLHjoONeQU/edit#slide=id.g73cf6cf64a_0_9
-
-Demo-5. https://docs.google.com/presentation/d/1tij8mnxX2RUFK7nxExzcri_sR3nQiFUgGrjuB862RYM/edit?usp=sharing
-
-Kafka https://docs.google.com/presentation/d/1s-PE9H6SfO_vgoV0IfJc345ZzA3LWJY5YoIdYANDnd0/edit?ts=5db0948e#slide=id.p
 
