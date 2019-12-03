@@ -2,7 +2,7 @@
 ** **
 ## Presentations
 
-Final Report: [Video](), [PDF]()
+Final Report: [Video](https://drive.google.com/file/d/1pTJ1RN2wMoLLRL1qzkmWKxZhBHBc_p7N/view?usp=sharing), [PDF]()
 
 Demo-1. [Slides](https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260)
 
