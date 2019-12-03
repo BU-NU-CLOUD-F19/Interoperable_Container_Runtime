@@ -23,7 +23,7 @@ Currently, the interoperable_app, interoperable_image_app, and image_approval_ma
 The modules sys, os, json, pyfiglet, colorama must all be present for the applications to run properly.
 
 To run checks on the containers, invoke the interoperable_app from the commandline as follows:
-python3 interoperable_app <container type> <container ID>
+python3 interoperable_app \<container type\> \<container ID\>
  
 Where container types are:
 Docker: --docker or --d
