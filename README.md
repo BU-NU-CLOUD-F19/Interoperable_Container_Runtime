@@ -25,26 +25,26 @@ The modules sys, os, json, pyfiglet, colorama must all be present for the applic
 To run checks on the containers, invoke the interoperable_app from the commandline as follows:
 python3 interoperable_app \<container type\> \<container ID\>
  
-Where container types are:
-Docker: --docker or --d
-cir-o: --crio or --c
-containerd: --containerd or --ctr
+Where container types are:  
+Docker: --docker or --d  
+cir-o: --crio or --c  
+containerd: --containerd or --ctr  
 
 To run checks on the image file a container is running, invoke the interoperable_image_app from the commandline as follows:
-python3 interoperable_image_app <container type> <container ID>
+python3 interoperable_image_app \<container type\> \<container ID\>
 
 Where container types are: 
-Docker: --docker or --d
-cir-o: --crio or --c
+Docker: --docker or --d  
+cir-o: --crio or --c  
 
 interoperable_image_app can be called containerd for forward compatibility purposes, however at present this merely displays a message that containerd is not supported.
 
 image_approval_manager writes image ids to approved and block lists which are checked against when the interoperable_image_app is called; part of the check is against whether the image is approved. To add an image id to a list, invoke from the commandline as follows:
-python3 image_approval_manager <action> <image ID>
+python3 image_approval_manager \<action\> \<image ID\>
  
-Where action is:
-Add to approved list: -a
-Add to block list: -b
+Where action is:  
+Add to approved list: -a  
+Add to block list: -b  
 
 ** **
 
