@@ -33,8 +33,8 @@ containerd: --containerd or --ctr
 To run checks on the image file a container is running, invoke the interoperable_image_app from the commandline as follows:
 python3 interoperable_image_app \<container type\> \<container ID\>
 
-Where container types are: 
-Docker: --docker or --d  
+Where container types are:   
+Docker: --docker or --d    
 cir-o: --crio or --c  
 
 interoperable_image_app can be called containerd for forward compatibility purposes, however at present this merely displays a message that containerd is not supported.
