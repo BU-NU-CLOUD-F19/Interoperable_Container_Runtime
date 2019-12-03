@@ -74,9 +74,7 @@ The ultimate goal is to develop an interoperable container runtime tool that all
 
 ## 2. Users/Personas Of The Project:
 
-The intended user is a software developer who is developing, testing, and managing applications across containers running on different runtimes.
- 
-Example Use Case: A software developer would like to launch an image in CRI-O instead of Docker, because he realizes that CRI-O is more adaptable with Kubernetes, and using this capability will provide this application a lot more scalibility. Presently, he needs to deal with changing all the continous-integration scripts in order to be able to test and deploy his application on this new container runtime. With our interoperable framework in place, the developer is at least able to run security checks on the new container runtime without changing their scripts beyond specifying the new target container. In this way, the user's workflow is simplified and can apply a standard across runtimes with minimal effort.
+The intended user is the Chief Information Security Officer or their designee of a medium- or large-scale cloud organization, who is tasked with ensuring that containers running their clusters meet requirements for secure containers. 
 
 ## 3.   Scope and Features Of The Project:
 
