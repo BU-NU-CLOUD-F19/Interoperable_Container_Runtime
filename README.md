@@ -2,7 +2,9 @@
 ** **
 ## Presentations
 
-Final Report: [Video](https://youtu.be/25ImmuQUdC4), [PDF](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/report/cloud-course-final-report/Article.pdf)
+Final Demo: [Video](https://youtu.be/25ImmuQUdC4)
+
+Project Report: [PDF](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/report/cloud-course-final-report/Article.pdf)
 
 Demo-1. [Slides](https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260)
 
@@ -92,17 +94,17 @@ These benchmarks are specified in pp 126-180 of the Benchmark documentation, and
 * **Do not use privileged containers** 
 * **Do not mount sensitive host system directories on containers** 
 * **Do not run ssh within containers** 
-* *Do not map privileged ports within containers* 
+* **Do not map privileged ports within containers** 
 * *Open only needed ports on container* 
-* *Do not share the host's network namespace* 
+* **Do not share the host's network namespace**
 * **Limit memory usage for container** 
 * **Set container CPU priority appropriately** 
 * **Mount container's root filesystem as read only** 
-* *Bind incoming container traffic to a specific host interface* 
+* **Bind incoming container traffic to a specific host interface**
 * *Set the 'on-failure' container restart policy to 5* 
 * **Do not share the host's process namespace** 
 * **Do not share the host's IPC namespace** 
-* *Do not directly expose host devices to containers* 
+* **Do not directly expose host devices to containers**
 * *Override default ulimit at runtime only if needed* 
 * Do not set mount propagation mode to shared 
 * **Do not share the host's UTS namespace** 
@@ -110,12 +112,12 @@ These benchmarks are specified in pp 126-180 of the Benchmark documentation, and
 * Do not docker exec commands with privileged option 
 * Do not docker exec commands with user option 
 * **Confirm cgroup usage** 
-* *Restrict container from acquiring additional privileges* 
+* **Restrict container from acquiring additional privileges**
 * Check container health at runtime 
 * Ensure docker commands always get the latest version of the image 
 * **Use PIDs cgroup limit** 
 * Do not use Docker's default bridge docker0 
-* Do not share the host's user namespaces 
+* **Do not share the host's user namespaces**
 * Do not mount the Docker socket inside any containers 
 
 We have an additional stretch goal to implement checks on Container Images and Build Files from the same CIS Docker 1.13.0 Benchmark document. The checks will only be implemented in Docker in CRI-O at present due to the linkages between container and image file in containerd requiring additional investigation. These checks are specified on pp 105-125 of the Doucmentation, and consist of the following (Bold: full implementation; Italics: partial impelementation):
