@@ -4,7 +4,7 @@
 
 Final Demo: [Video](https://youtu.be/25ImmuQUdC4)
 
-Project Report: [PDF](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/report/cloud-course-final-report/Article.pdf)
+Project Report: [PDF](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/report/cloud-course-final-report/Article.pdf) -- **Please take a look at our report!
 
 Demo-1. [Slides](https://docs.google.com/presentation/d/1bMloLDt2xd2_FndwoQxTObwoqmAbbAUSy2fq8pvovYQ/edit#slide=id.g61835f440d_2_260)
 
