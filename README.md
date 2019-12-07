@@ -2,7 +2,7 @@
 ** **
 ## Presentations
 
-Final Demo: [Video](https://youtu.be/25ImmuQUdC4)  -- Slides (https://docs.google.com/presentation/d/16Vyvg0J3g5qTOoLiD-UqEhegqPFhv5gWgzHhU2YV-0E/edit?usp=sharing)
+Final Demo: [Video](https://drive.google.com/file/d/12yxbAZoaVQFM_wcgt0ngBWYEvzh9KcaD/view?usp=sharing)  -- Slides (https://docs.google.com/presentation/d/16Vyvg0J3g5qTOoLiD-UqEhegqPFhv5gWgzHhU2YV-0E/edit?usp=sharing)
 
 Project Report: [PDF](https://github.com/BU-NU-CLOUD-F19/Interoperable_Container_Runtime/blob/master/report/cloud-course-final-report/Article.pdf) -- **Please take a look at our report!
 
